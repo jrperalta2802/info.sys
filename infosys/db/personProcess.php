@@ -5,7 +5,7 @@ error_reporting(E_ALL);
 
 
 
-require 'db/dbcon.php';
+require 'dbcon.php';
 
 // Enable output buffering
 ob_start();

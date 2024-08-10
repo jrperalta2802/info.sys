@@ -7,7 +7,7 @@ $(document).on('submit', '#saveLeader', function (e) {
 
     $.ajax({
         type: "POST",
-        url: "personProcess.php",
+        url: "db/personProcess.php",
         data: formData,
         processData: false,
         contentType: false,
@@ -57,7 +57,7 @@ $(document).on('click', '.editLeaderBtn', function () {
     var leader_id = $(this).val();
     $.ajax({
         type: "GET",
-        url: "personProcess.php?leader_id=" + leader_id,
+        url: "db/personProcess.php?leader_id=" + leader_id,
         success: function (response) {
             var res = typeof response === 'object' ? response : jQuery.parseJSON(response);
             if (res.status == 404) {
@@ -136,7 +136,7 @@ $(document).on('submit', '#updateLeader', function (e) {
 
     $.ajax({
         type: "POST",
-        url: "personProcess.php",
+        url: "db/personProcess.php",
         data: formData,
         processData: false,
         contentType: false,
@@ -171,7 +171,7 @@ $(document).on('click', '.viewLeaderBtn', function () {
     var leader_id = $(this).val();
     $.ajax({
         type: "GET",
-        url: "personProcess.php?leader_id=" + leader_id,
+        url: "db/personProcess.php?leader_id=" + leader_id,
         success: function (response) {
             var res = typeof response === 'object' ? response : jQuery.parseJSON(response);
             if (res.status == 404) {
@@ -209,7 +209,7 @@ $(document).on('click', '.deleteLeaderBtn', function (e) {
         var leader_id = $(this).val();
         $.ajax({
             type: "POST",
-            url: "personProcess.php",
+            url: "db/personProcess.php",
             data: {
                 'delete_leader': true,
                 'leader_id': leader_id
