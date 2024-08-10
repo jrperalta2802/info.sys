@@ -1,6 +1,6 @@
 <?php
 
-$con = mysqli_connect("localhost","root","root","data_sys");
+$con = mysqli_connect("localhost","root","","datasys");
 
 if(!$con){
     die('Connection Failed'. mysqli_connect_error());
