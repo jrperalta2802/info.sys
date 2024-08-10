@@ -1,4 +1,3 @@
- <!-- testComment  charles -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -14,9 +13,9 @@
 </head>
 <body>
 
-<?php include 'add_stu.php'; ?>
-<?php include 'edit_stu.php'; ?>
-<?php include 'view_stu.php'; ?>
+<?php include 'db/addPerson.php'; ?>
+<?php include 'db/editPerson.php'; ?>
+<?php include 'db/viewPerson.php'; ?>
 
 <div class="container mt-4">
     <div class="row">
@@ -47,7 +46,7 @@
                         </thead>
                         <tbody>
                             <?php
-                            require 'dbcon.php';
+                            require 'db/dbcon.php';
 
                             $query = "SELECT * FROM leaders";
                             $query_run = mysqli_query($con, $query);
@@ -96,7 +95,7 @@ $(document).on('submit', '#saveLeader', function (e) {
 
     $.ajax({
         type: "POST",
-        url: "code.php",
+        url: "personProcess.php",
         data: formData,
         processData: false,
         contentType: false,
@@ -146,7 +145,7 @@ $(document).on('click', '.editLeaderBtn', function () {
     var leader_id = $(this).val();
     $.ajax({
         type: "GET",
-        url: "code.php?leader_id=" + leader_id,
+        url: "personProcess.php?leader_id=" + leader_id,
         success: function (response) {
             var res = typeof response === 'object' ? response : jQuery.parseJSON(response);
             if (res.status == 404) {
@@ -225,7 +224,7 @@ $(document).on('submit', '#updateLeader', function (e) {
 
     $.ajax({
         type: "POST",
-        url: "code.php",
+        url: "personProcess.php",
         data: formData,
         processData: false,
         contentType: false,
@@ -260,7 +259,7 @@ $(document).on('click', '.viewLeaderBtn', function () {
     var leader_id = $(this).val();
     $.ajax({
         type: "GET",
-        url: "code.php?leader_id=" + leader_id,
+        url: "personProcess.php?leader_id=" + leader_id,
         success: function (response) {
             var res = typeof response === 'object' ? response : jQuery.parseJSON(response);
             if (res.status == 404) {
@@ -298,7 +297,7 @@ $(document).on('click', '.deleteLeaderBtn', function (e) {
         var leader_id = $(this).val();
         $.ajax({
             type: "POST",
-            url: "code.php",
+            url: "personProcess.php",
             data: {
                 'delete_leader': true,
                 'leader_id': leader_id

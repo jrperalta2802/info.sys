@@ -15,12 +15,12 @@
                                 <label for="barangay">Barangay</label>
                                 <input type="text" class="form-control" id="barangay" name="barangay" list="barangay-list">
                                 <datalist id="barangay-list">
-                                    <?php include 'brgy_opt.php'; ?>
+                                    <?php include 'includes/brgy_opt.php'; ?>
                                 </datalist>
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label for="contact_number">Contact Number</label>
-                                <input type="tel" class="form-control" id="contact_number" name="contact_number" pattern="[0-9]{4}-[0-9]{3}-[0-9]{4}">
+                                <input type="tel" class="form-control" id="contact_number" name="contact_number" placeholder="09XX-XXX-XXXX" pattern="[0-9]{4}-[0-9]{3}-[0-9]{4}">
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label for="precint_no">Precinct No.</label>
@@ -84,7 +84,7 @@
                                     </div>
                                     <div class="col-md-2 mb-3">
                                         <label for="member_contact">Contact Number</label>
-                                        <input type="tel" class="form-control" name="member_contact[]">
+                                        <input type="tel" class="form-control" name="member_contact[]" placeholder="09XX-XXX-XXXX" pattern="[0-9]{4}-[0-9]{3}-[0-9]{4}">
                                     </div>
                                     <div class="col-md-3 mb-3">
                                         <label for="member_precinct">Precinct No.</label>
@@ -133,7 +133,7 @@
                         </div>
                         <div class="col-md-2 mb-3">
                             <label for="member_contact">Contact Number</label>
-                            <input type="tel" class="form-control" name="member_contact[]">
+                            <input type="tel" class="form-control" name="member_contact[]" placeholder="09XX-XXX-XXXX" pattern="[0-9]{4}-[0-9]{3}-[0-9]{4}">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label for="member_precinct">Precinct No.</label>

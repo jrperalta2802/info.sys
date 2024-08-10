@@ -14,11 +14,14 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <label for="edit_barangay">Barangay</label>
-                                <input type="text" id="edit_barangay" name="barangay" class="form-control">
+                                <input type="text" id="edit_barangay" name="barangay" class="form-control" list="barangay-list">
+                                <datalist id="barangay-list">
+                                    <?php include 'includes/brgy_opt.php'; ?>
+                                </datalist>
                             </div>
                             <div class="col-md-4">
                                 <label for="edit_contact_number">Contact Number</label>
-                                <input type="tel" id="edit_contact_number" name="contact_number" class="form-control">
+                                <input type="tel" id="edit_contact_number" name="contact_number" class="form-control" placeholder="09XX-XXX-XXXX" pattern="[0-9]{4}-[0-9]{3}-[0-9]{4}">
                             </div>
                             <div class="col-md-4">
                                 <label for="edit_precint_no">Precint No.</label>
@@ -99,7 +102,7 @@
                         </div>
                         <div class="col-md-2 mb-3">
                             <label for="member_contact">Contact Number</label>
-                            <input type="tel" class="form-control" name="member_contact[]">
+                            <input type="tel" class="form-control" name="member_contact[]" placeholder="09XX-XXX-XXXX" pattern="[0-9]{4}-[0-9]{3}-[0-9]{4}">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label for="member_precinct">Precinct No.</label>

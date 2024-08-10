@@ -3,9 +3,9 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-//test push
 
-require 'dbcon.php';
+
+require 'db/dbcon.php';
 
 // Enable output buffering
 ob_start();
@@ -86,7 +86,6 @@ if (isset($_POST['save_leader'])) {
     }
 }
 
-//fix error naming con "conn"
 // Assuming you've already included the database connection
 if (isset($_POST['update_leader'])) {
     // Validate and sanitize input data
