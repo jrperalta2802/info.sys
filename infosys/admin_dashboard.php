@@ -121,11 +121,6 @@ header("Pragma: no-cache");
                                 <th>Full Name</th>
                                 <th>Contact Number</th>
                                 <th>Precinct No.</th>
-                                <th>Birthdate</th>
-                                <th>Age</th>
-                                <th>Civil Status</th>
-                                <th>Sex</th>
-                                <th>Address</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -144,11 +139,6 @@ header("Pragma: no-cache");
                                         <td><?= $leader['full_name'] ?></td>
                                         <td><?= $leader['contact_number'] ?></td>
                                         <td><?= $leader['precint_no'] ?></td>
-                                        <td><?= $leader['birthdate'] ?></td>
-                                        <td><?= $leader['age'] ?></td>
-                                        <td><?= $leader['civil_status'] ?></td>
-                                        <td><?= $leader['sex'] ?></td>
-                                        <td><?= $leader['address'] ?></td>
                                         <td>
                                             <div class="btn-group" role="group">
                                                 <button type="button" value="<?= $leader['id']; ?>" class="viewLeaderBtn btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="View Leader">View</button>

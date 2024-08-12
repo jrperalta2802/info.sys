@@ -181,6 +181,14 @@ $(document).on('click', '.viewLeaderBtn', function () {
                 $('#view_barangay').text(res.data.leader.barangay);
                 $('#view_full_name').text(res.data.leader.full_name);
                 $('#view_precint_no').text(res.data.leader.precint_no);
+                $('#view_contact_number').text(res.data.leader.contact_number);
+                $('#view_address').text(res.data.leader.address);
+                $('#view_birthdate').text(res.data.leader.birthdate);
+                $('#view_age').text(res.data.leader.age);
+                $('#view_civil_status').text(res.data.leader.civil_status);
+                $('#view_sex').text(res.data.leader.sex);
+                $('#view_uid').text(res.data.leader.UID); // Display leader UID
+
                 // Populate members table
                 var membersTableBody = $('#membersTableBody');
                 membersTableBody.empty(); // Clear existing rows
@@ -188,6 +196,7 @@ $(document).on('click', '.viewLeaderBtn', function () {
                 res.data.members.forEach(function (member) {
                     var row = '<tr>' +
                         '<td><img src="/info.sys/infosys/db/uploads/members/' + member.member_photo + '" alt="Member Photo" class="img-fluid rounded" style="max-width: 50px;"></td>' +
+                        '<td>' + member.UID + '</td>' + // Display member UID
                         '<td>' + member.member_name + '</td>' +
                         '<td>' + member.member_birthdate + '</td>' +
                         '<td>' + member.member_contact + '</td>' +
@@ -201,7 +210,6 @@ $(document).on('click', '.viewLeaderBtn', function () {
         }
     });
 });
-
 
 $(document).on('click', '.deleteLeaderBtn', function (e) {
     e.preventDefault();

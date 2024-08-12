@@ -3,21 +3,12 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-
-
 require 'dbcon.php';
 
-// Enable output buffering
 ob_start();
 header('Content-Type: application/json');
 
-// Enable error reporting
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 if (isset($_POST['save_leader'])) {
-    // Validate and sanitize inputs
     $barangay = mysqli_real_escape_string($con, $_POST['barangay']);
     $full_name = mysqli_real_escape_string($con, $_POST['full_name']);
     $contact_number = mysqli_real_escape_string($con, $_POST['contact_number']);
@@ -27,6 +18,20 @@ if (isset($_POST['save_leader'])) {
     $civil_status = mysqli_real_escape_string($con, $_POST['civil_status']);
     $sex = mysqli_real_escape_string($con, $_POST['sex']);
     $address = mysqli_real_escape_string($con, $_POST['address']);
+
+    // Check if leader already exists
+    $check_query = "SELECT id FROM leaders WHERE full_name = ? AND contact_number = ? AND precint_no = ?";
+    $stmt = $con->prepare($check_query);
+    $stmt->bind_param("sss", $full_name, $contact_number, $precint_no);
+    $stmt->execute();
+    $stmt->store_result();
+
+    if ($stmt->num_rows > 0) {
+        echo json_encode(['status' => 400, 'message' => 'Leader already exists']);
+        exit();
+    }
+
+    $stmt->close();
 
     // Handle leader's photo upload
     if (isset($_FILES['leaders_photo']) && $_FILES['leaders_photo']['error'] == 0) {
@@ -42,23 +47,33 @@ if (isset($_POST['save_leader'])) {
         exit();
     }
 
+    // Insert leader data
     $query = "INSERT INTO leaders (barangay, full_name, contact_number, precint_no, birthdate, age, civil_status, sex, address, leaders_photo) 
-              VALUES ('$barangay', '$full_name', '$contact_number', '$precint_no', '$birthdate', '$age', '$civil_status', '$sex', '$address', '$leaders_photo_name')";
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $stmt = $con->prepare($query);
+    $stmt->bind_param("ssssssssss", $barangay, $full_name, $contact_number, $precint_no, $birthdate, $age, $civil_status, $sex, $address, $leaders_photo_name);
+    if ($stmt->execute()) {
+        $leader_id = $stmt->insert_id;
 
-    $query_run = mysqli_query($con, $query);
-
-    if ($query_run) {
-        $leader_id = mysqli_insert_id($con);
-        $member_name = $_POST['member_name'];
-        $member_birthdate = $_POST['member_birthdate'];
-        $member_contact = $_POST['member_contact'];
-        $member_precinct = $_POST['member_precinct'];
-
-        foreach ($member_name as $index => $name) {
+        foreach ($_POST['member_name'] as $index => $name) {
             $name = mysqli_real_escape_string($con, $name);
-            $birthdate = mysqli_real_escape_string($con, $member_birthdate[$index]);
-            $contact = mysqli_real_escape_string($con, $member_contact[$index]);
-            $precinct = mysqli_real_escape_string($con, $member_precinct[$index]);
+            $member_birthdate = mysqli_real_escape_string($con, $_POST['member_birthdate'][$index]);
+            $member_contact = mysqli_real_escape_string($con, $_POST['member_contact'][$index]);
+            $member_precinct = mysqli_real_escape_string($con, $_POST['member_precinct'][$index]);
+
+            // Check if member already exists
+            $check_member_query = "SELECT id FROM members WHERE leader_id = ? AND member_name = ? AND member_contact = ?";
+            $stmt = $con->prepare($check_member_query);
+            $stmt->bind_param("iss", $leader_id, $name, $member_contact);
+            $stmt->execute();
+            $stmt->store_result();
+
+            if ($stmt->num_rows > 0) {
+                // If member already exists, skip to the next one
+                continue;
+            }
+
+            $stmt->close();
 
             // Handle member's photo upload
             if (isset($_FILES['member_photo']['name'][$index]) && $_FILES['member_photo']['error'][$index] == 0) {
@@ -74,16 +89,19 @@ if (isset($_POST['save_leader'])) {
                 exit();
             }
 
-            $query = "INSERT INTO members (leader_id, member_name, member_birthdate, member_contact, member_precinct, member_photo)
-                      VALUES ('$leader_id', '$name', '$birthdate', '$contact', '$precinct', '$member_photo_name')";
-
-            $query_run = mysqli_query($con, $query);
+            // Insert member data
+            $query = "INSERT INTO members (leader_id, member_name, member_birthdate, member_contact, member_precinct, member_photo) 
+                      VALUES (?, ?, ?, ?, ?, ?)";
+            $stmt = $con->prepare($query);
+            $stmt->bind_param("isssss", $leader_id, $name, $member_birthdate, $member_contact, $member_precinct, $member_photo_name);
+            $stmt->execute();
         }
 
         echo json_encode(['status' => 200, 'message' => 'Leader and members created successfully']);
     } else {
         echo json_encode(['status' => 500, 'message' => 'Leader not created']);
     }
+    $stmt->close();
 }
 
 // Assuming you've already included the database connection
@@ -204,19 +222,25 @@ if (isset($_POST['update_leader'])) {
         echo json_encode(['status' => 500, 'message' => 'Error updating leader: ' . $update_leader_stmt->error]);
     }
 }
-if(isset($_GET['leader_id'])) {
+if (isset($_GET['leader_id'])) {
     $leader_id = $_GET['leader_id'];
     $leader_query = "SELECT * FROM leaders WHERE id = '$leader_id'";
     $leader_result = mysqli_query($con, $leader_query);
 
-    if(mysqli_num_rows($leader_result) == 1) {
+    if (mysqli_num_rows($leader_result) == 1) {
         $leader = mysqli_fetch_assoc($leader_result);
 
         $members_query = "SELECT * FROM members WHERE leader_id = '$leader_id'";
         $members_result = mysqli_query($con, $members_query);
         $members = mysqli_fetch_all($members_result, MYSQLI_ASSOC);
 
-        echo json_encode(['status' => 200, 'data' => ['leader' => $leader, 'members' => $members]]);
+        echo json_encode([
+            'status' => 200,
+            'data' => [
+                'leader' => $leader,
+                'members' => $members
+            ]
+        ]);
     } else {
         echo json_encode(['status' => 404, 'message' => 'Leader not found']);
     }
