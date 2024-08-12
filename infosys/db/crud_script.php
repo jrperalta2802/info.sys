@@ -75,7 +75,7 @@ $(document).on('click', '.editLeaderBtn', function () {
                 $('#edit_address').val(res.data.leader.address);
 
                 // Load leader photo
-                $('#leader_photo_preview').attr('src', '/infosys/uploads/leaders/' + res.data.leader.leaders_photo);
+                $('#leader_photo_preview').attr('src', '/info.sys/infosys/db/uploads/leaders/' + res.data.leader.leaders_photo);
 
                 // Clear existing member forms
                 $('#edit-members-container').empty();
@@ -111,7 +111,7 @@ $(document).on('click', '.editLeaderBtn', function () {
                             <div class="col-md-3 mb-3">
                                 <label for="member_photo">Member Photo</label>
                                 <input type="file" class="form-control-file" name="member_photo[]">
-                                <img src="/infosys/uploads/members/${member.member_photo}" alt="Member Photo" class="img-fluid rounded mt-2" style="max-width: 50px;">
+                                <img src="/info.sys/infosys/db/uploads/members/${member.member_photo}" alt="Member Photo" class="img-fluid rounded mt-2" style="max-width: 50px;">
                                 <input type="hidden" name="existing_member_photo[]" value="${member.member_photo}">
                             </div>
                         </div>`;
@@ -177,7 +177,7 @@ $(document).on('click', '.viewLeaderBtn', function () {
             if (res.status == 404) {
                 alert(res.message);
             } else if (res.status == 200) {
-                $('#view_leader_photo').attr('src', '/infosys/uploads/leaders/' + res.data.leader.leaders_photo);
+                $('#view_leader_photo').attr('src', '/info.sys/infosys/db/uploads/leaders/' + res.data.leader.leaders_photo);
                 $('#view_barangay').text(res.data.leader.barangay);
                 $('#view_full_name').text(res.data.leader.full_name);
                 $('#view_precint_no').text(res.data.leader.precint_no);
@@ -187,7 +187,7 @@ $(document).on('click', '.viewLeaderBtn', function () {
 
                 res.data.members.forEach(function (member) {
                     var row = '<tr>' +
-                        '<td><img src="/infosys/uploads/members/' + member.member_photo + '" alt="Member Photo" class="img-fluid rounded" style="max-width: 50px;"></td>' +
+                        '<td><img src="/info.sys/infosys/db/uploads/members/' + member.member_photo + '" alt="Member Photo" class="img-fluid rounded" style="max-width: 50px;"></td>' +
                         '<td>' + member.member_name + '</td>' +
                         '<td>' + member.member_birthdate + '</td>' +
                         '<td>' + member.member_contact + '</td>' +

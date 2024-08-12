@@ -103,7 +103,7 @@ if (isset($_POST['update_leader'])) {
     // Handle file upload for leader photo
     $leaders_photo = isset($_FILES['leaders_photo']['name']) ? $_FILES['leaders_photo']['name'] : '';
     $leader_photo_tmp = isset($_FILES['leaders_photo']['tmp_name']) ? $_FILES['leaders_photo']['tmp_name'] : '';
-    $leader_photo_folder = 'uploads/leaders/' . $leaders_photo;
+    $leader_photo_folder = '' . $leaders_photo;
 
     $leader_photo_query = "";
     if ($leaders_photo) {
@@ -137,7 +137,7 @@ if (isset($_POST['update_leader'])) {
 
             $member_photo = isset($_FILES['member_photo']['name'][$index]) ? $_FILES['member_photo']['name'][$index] : '';
             $member_photo_tmp = isset($_FILES['member_photo']['tmp_name'][$index]) ? $_FILES['member_photo']['tmp_name'][$index] : '';
-            $member_photo_folder = 'uploads/members/' . $member_photo;
+            $member_photo_folder = '' . $member_photo;
 
             if ($member_photo) {
                 if (!move_uploaded_file($member_photo_tmp, $member_photo_folder)) {
@@ -183,13 +183,29 @@ if(isset($_GET['leader_id'])) {
 if (isset($_POST['delete_leader'])) {
     $leader_id = mysqli_real_escape_string($con, $_POST['leader_id']);
 
-    $query = "DELETE FROM leaders WHERE id='$leader_id'";
-    $query_run = mysqli_query($con, $query);
+    // Start transaction
+    mysqli_begin_transaction($con);
 
-    if ($query_run) {
-        echo json_encode(['status' => 200, 'message' => 'Leader deleted successfully']);
-    } else {
-        echo json_encode(['status' => 500, 'message' => 'Leader not deleted']);
+    try {
+        // Delete members associated with the leader
+        $delete_members_query = "DELETE FROM members WHERE leader_id='$leader_id'";
+        $delete_members_run = mysqli_query($con, $delete_members_query);
+
+        // Delete the leader
+        $delete_leader_query = "DELETE FROM leaders WHERE id='$leader_id'";
+        $delete_leader_run = mysqli_query($con, $delete_leader_query);
+
+        // Check if both queries were successful
+        if ($delete_members_run && $delete_leader_run) {
+            mysqli_commit($con); // Commit the transaction
+            echo json_encode(['status' => 200, 'message' => 'Leader and Members deleted successfully']);
+        } else {
+            mysqli_rollback($con); // Rollback the transaction in case of error
+            echo json_encode(['status' => 500, 'message' => 'Leader and Members not deleted']);
+        }
+    } catch (Exception $e) {
+        mysqli_rollback($con); // Rollback the transaction in case of exception
+        echo json_encode(['status' => 500, 'message' => 'An error occurred. Leader and Members not deleted']);
     }
 }
 
