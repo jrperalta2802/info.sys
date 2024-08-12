@@ -7,7 +7,6 @@ require 'dbcon.php';
 
 ob_start();
 header('Content-Type: application/json');
-
 if (isset($_POST['save_leader'])) {
     $barangay = mysqli_real_escape_string($con, $_POST['barangay']);
     $full_name = mysqli_real_escape_string($con, $_POST['full_name']);
@@ -61,16 +60,23 @@ if (isset($_POST['save_leader'])) {
             $member_contact = mysqli_real_escape_string($con, $_POST['member_contact'][$index]);
             $member_precinct = mysqli_real_escape_string($con, $_POST['member_precinct'][$index]);
 
-            // Check if member already exists
-            $check_member_query = "SELECT id FROM members WHERE leader_id = ? AND member_name = ? AND member_contact = ?";
+            // Check if member already exists under any leader
+            $check_member_query = "
+                SELECT m.id, l.full_name 
+                FROM members m 
+                JOIN leaders l ON m.leader_id = l.id 
+                WHERE m.member_name = ? AND m.member_contact = ? AND m.member_precinct = ?";
             $stmt = $con->prepare($check_member_query);
-            $stmt->bind_param("iss", $leader_id, $name, $member_contact);
+            $stmt->bind_param("sss", $name, $member_contact, $member_precinct);
             $stmt->execute();
             $stmt->store_result();
 
             if ($stmt->num_rows > 0) {
-                // If member already exists, skip to the next one
-                continue;
+                // Fetch the leader's name
+                $stmt->bind_result($member_id, $leader_name);
+                $stmt->fetch();
+                echo json_encode(['status' => 422, 'message' => "Member '$name' already exists under leader '$leader_name'."]);
+                exit();
             }
 
             $stmt->close();
@@ -103,6 +109,8 @@ if (isset($_POST['save_leader'])) {
     }
     $stmt->close();
 }
+
+
 
 // Assuming you've already included the database connection
 if (isset($_POST['update_leader'])) {
