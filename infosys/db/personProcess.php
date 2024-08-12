@@ -103,18 +103,44 @@ if (isset($_POST['update_leader'])) {
     // Handle file upload for leader photo
     $leaders_photo = isset($_FILES['leaders_photo']['name']) ? $_FILES['leaders_photo']['name'] : '';
     $leader_photo_tmp = isset($_FILES['leaders_photo']['tmp_name']) ? $_FILES['leaders_photo']['tmp_name'] : '';
-    $leader_photo_folder = '' . $leaders_photo;
 
-    $leader_photo_query = "";
-    if ($leaders_photo) {
-        if (move_uploaded_file($leader_photo_tmp, $leader_photo_folder)) {
-            $leader_photo_query = ", leaders_photo='$leader_photo_folder'";
-        } else {
-            error_log("Failed to move uploaded file for leader photo.");
-        }
+    // Define the upload directory
+    $upload_dir = 'uploads/leaders/';
+    $leader_photo_name = basename($leaders_photo); // Extract only the file name
+    $leader_photo_folder = $upload_dir . $leader_photo_name;
+
+    $old_leader_photo = ''; // Initialize variable to store the old photo path
+
+    // Fetch the old photo path from the database
+    $result = mysqli_query($con, "SELECT leaders_photo FROM leaders WHERE id='$leader_id'");
+    if ($row = mysqli_fetch_assoc($result)) {
+        $old_leader_photo = $row['leaders_photo'];
     }
 
-    // Use a prepared statement for updating the leader
+    // Ensure the directory exists
+    if (!is_dir($upload_dir)) {
+        mkdir($upload_dir, 0777, true); // Create directory if it doesn't exist
+    }
+
+    // Handle file replacement
+    if ($leaders_photo) {
+        if (move_uploaded_file($leader_photo_tmp, $leader_photo_folder)) {
+            // Delete old photo if it exists and is not the same as the new one
+            if ($old_leader_photo && file_exists($upload_dir . $old_leader_photo) && $old_leader_photo !== $leader_photo_name) {
+                unlink($upload_dir . $old_leader_photo);
+            }
+            // Store only the file name in the database
+            $leader_photo_query = ", leaders_photo='$leader_photo_name'";
+        } else {
+            error_log("Failed to move uploaded file for leader photo.");
+            $leader_photo_query = ''; // Don't update the photo if upload fails
+        }
+    } else {
+        // Use existing photo if no new photo is uploaded
+        $leader_photo_query = '';
+    }
+
+    // Prepare and execute the update query
     $update_leader_stmt = $con->prepare(
         "UPDATE leaders 
         SET barangay=?, contact_number=?, precint_no=?, full_name=?, birthdate=?, age=?, address=?, civil_status=?, sex=? $leader_photo_query
@@ -135,23 +161,38 @@ if (isset($_POST['update_leader'])) {
             $member_contact = mysqli_real_escape_string($con, $_POST['member_contact'][$index]);
             $member_precinct = mysqli_real_escape_string($con, $_POST['member_precinct'][$index]);
 
+            // Handle file upload for member photo
             $member_photo = isset($_FILES['member_photo']['name'][$index]) ? $_FILES['member_photo']['name'][$index] : '';
             $member_photo_tmp = isset($_FILES['member_photo']['tmp_name'][$index]) ? $_FILES['member_photo']['tmp_name'][$index] : '';
-            $member_photo_folder = '' . $member_photo;
 
+            // Define the upload directory and extract the filename
+            $upload_dir = 'uploads/members/';
+            $member_photo_name = basename($member_photo); // Extract only the file name
+            $member_photo_folder = $upload_dir . $member_photo_name;
+
+            // Handle file replacement
             if ($member_photo) {
-                if (!move_uploaded_file($member_photo_tmp, $member_photo_folder)) {
+                if (move_uploaded_file($member_photo_tmp, $member_photo_folder)) {
+                    // Delete old photo if it exists and is not the same as the new one
+                    $old_member_photo = isset($_POST['existing_member_photo'][$index]) ? $_POST['existing_member_photo'][$index] : '';
+                    if ($old_member_photo && file_exists($upload_dir . $old_member_photo) && $old_member_photo !== $member_photo_name) {
+                        unlink($upload_dir . $old_member_photo);
+                    }
+                } else {
                     error_log("Failed to move uploaded file for member photo at index $index.");
+                    $member_photo_name = ''; // Set to empty if upload fails
                 }
             } else {
-                $member_photo_folder = isset($_POST['existing_member_photo'][$index]) ? $_POST['existing_member_photo'][$index] : '';
+                // Use existing photo if no new photo is uploaded
+                $member_photo_name = isset($_POST['existing_member_photo'][$index]) ? $_POST['existing_member_photo'][$index] : '';
             }
 
+            // Prepare and execute the database insert query
             $member_stmt = $con->prepare(
                 "INSERT INTO members (leader_id, member_name, member_birthdate, member_contact, member_precinct, member_photo) 
                 VALUES (?, ?, ?, ?, ?, ?)"
             );
-            $member_stmt->bind_param("isssss", $leader_id, $member_name, $member_birthdate, $member_contact, $member_precinct, $member_photo_folder);
+            $member_stmt->bind_param("isssss", $leader_id, $member_name, $member_birthdate, $member_contact, $member_precinct, $member_photo_name);
 
             if (!$member_stmt->execute()) {
                 error_log("Error inserting member: " . $member_stmt->error);
