@@ -81,7 +81,7 @@
                             <div class="col-md-3 mb-3">
                                 <label for="leaders_photo">Leader Photo</label>
                                 <span class="star">*</span>
-                                <input type="file" class="form-control-file" id="leaders_photo" name="leaders_photo" required>
+                                <input type="file" class="form-control" id="leaders_photo" name="leaders_photo" required>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <h3>Members</h3>
@@ -120,7 +120,7 @@
                                     <div class="col-md-3 mb-3">
                                         <label for="member_photo">Member Photo</label>
                                         <span class="star">*</span>
-                                        <input type="file" class="form-control-file" name="member_photo[]" required>
+                                        <input type="file" class="form-control" name="member_photo[]">
                                     </div>
                                 </div>
                             </div>
@@ -174,7 +174,7 @@
                         <div class="col-md-3 mb-3">
                             <label for="member_photo">Member Photo</label>
                              <span class="star">*</span>
-                            <input type="file" class="form-control-file" name="member_photo[]" required>
+                            <input type="file" class="form-control" name="member_photo[]">
                         </div>
                     </div>`;
                 document.getElementById('members-container').insertAdjacentHTML('beforeend', newMemberForm);

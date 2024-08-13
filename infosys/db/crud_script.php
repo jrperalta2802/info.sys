@@ -110,8 +110,8 @@ $(document).on('click', '.editLeaderBtn', function () {
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label for="member_photo">Member Photo</label>
-                                <input type="file" class="form-control-file" name="member_photo[]">
-                                <img src="/info.sys/infosys/db/uploads/members/${member.member_photo}" alt="Member Photo" class="img-fluid rounded mt-2" style="max-width: 50px;">
+                                <input type="file" class="form-control" name="member_photo[]">
+                                <img src="/info.sys/infosys/db/uploads/members/${member.member_photo}" alt="" class="img-fluid rounded mt-2" style="max-width: 50px;">
                                 <input type="hidden" name="existing_member_photo[]" value="${member.member_photo}">
                             </div>
                         </div>`;
@@ -195,7 +195,7 @@ $(document).on('click', '.viewLeaderBtn', function () {
 
                 res.data.members.forEach(function (member) {
                     var row = '<tr>' +
-                        '<td><img src="/info.sys/infosys/db/uploads/members/' + member.member_photo + '" alt="Member Photo" class="img-fluid rounded" style="max-width: 50px;"></td>' +
+                        '<td><img src="/info.sys/infosys/db/uploads/members/' + member.member_photo + '" alt="" class="img-fluid rounded" style="max-width: 50px;"></td>' +
                         '<td>' + member.UID + '</td>' + // Display member UID
                         '<td>' + member.member_name + '</td>' +
                         '<td>' + member.member_birthdate + '</td>' +

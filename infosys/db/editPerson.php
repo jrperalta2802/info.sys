@@ -118,7 +118,7 @@
                         </div>
                         <div class="col-md-3 mb-3">
                             <label for="member_photo">Member Photo</label>
-                            <input type="file" class="form-control-file" name="member_photo[]">
+                            <input type="file" class="form-control" name="member_photo[]">
                         </div>
                     </div>`;
                 document.getElementById('edit-members-container').insertAdjacentHTML('beforeend', newMemberForm);

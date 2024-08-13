@@ -32,11 +32,17 @@ if (isset($_POST['save_leader'])) {
 
     $stmt->close();
 
-    // Handle leader's photo upload
+    // Handle leader's photo upload (mandatory)
     if (isset($_FILES['leaders_photo']) && $_FILES['leaders_photo']['error'] == 0) {
         $leaders_photo_name = $_FILES['leaders_photo']['name'];
         $leaders_photo_tmp = $_FILES['leaders_photo']['tmp_name'];
-        $leaders_photo_path = 'uploads/leaders/' . $leaders_photo_name;
+        $leaders_photo_path = __DIR__ . '/uploads/leaders/' . $leaders_photo_name;
+
+        // Create directory if it doesn't exist
+        if (!file_exists(__DIR__ . '/uploads/leaders')) {
+            mkdir(__DIR__ . '/uploads/leaders', 0777, true);
+        }
+
         if (!move_uploaded_file($leaders_photo_tmp, $leaders_photo_path)) {
             echo json_encode(['status' => 500, 'message' => 'Failed to upload leader photo']);
             exit();
@@ -81,26 +87,31 @@ if (isset($_POST['save_leader'])) {
 
             $stmt->close();
 
-            // Handle member's photo upload
-            if (isset($_FILES['member_photo']['name'][$index]) && $_FILES['member_photo']['error'][$index] == 0) {
-                $member_photo_name = $_FILES['member_photo']['name'][$index];
-                $member_photo_tmp = $_FILES['member_photo']['tmp_name'][$index];
-                $member_photo_path = 'uploads/members/' . $member_photo_name;
-                if (!move_uploaded_file($member_photo_tmp, $member_photo_path)) {
-                    echo json_encode(['status' => 500, 'message' => 'Failed to upload member photo']);
-                    exit();
-                }
-            } else {
-                echo json_encode(['status' => 400, 'message' => 'Member photo is required']);
-                exit();
-            }
+            // Handle member's photo upload (optional)
+if (isset($_FILES['member_photo']['name'][$index]) && $_FILES['member_photo']['error'][$index] == 0) {
+    $member_photo_name = $_FILES['member_photo']['name'][$index];
+    $member_photo_tmp = $_FILES['member_photo']['tmp_name'][$index];
+    $member_photo_path = __DIR__ . '/uploads/members/' . $member_photo_name;
 
-            // Insert member data
-            $query = "INSERT INTO members (leader_id, member_name, member_birthdate, member_contact, member_precinct, member_photo) 
-                      VALUES (?, ?, ?, ?, ?, ?)";
-            $stmt = $con->prepare($query);
-            $stmt->bind_param("isssss", $leader_id, $name, $member_birthdate, $member_contact, $member_precinct, $member_photo_name);
-            $stmt->execute();
+    // Create directory if it doesn't exist
+    if (!file_exists(__DIR__ . '/uploads/members')) {
+        mkdir(__DIR__ . '/uploads/members', 0777, true);
+    }
+
+    if (!move_uploaded_file($member_photo_tmp, $member_photo_path)) {
+        echo json_encode(['status' => 500, 'message' => 'Failed to upload member photo']);
+        exit();
+    }
+} else {
+    $member_photo_name = ''; // Set to an empty string or default value if no photo is uploaded
+}
+
+// Insert member data
+$query = "INSERT INTO members (leader_id, member_name, member_birthdate, member_contact, member_precinct, member_photo) 
+          VALUES (?, ?, ?, ?, ?, ?)";
+$stmt = $con->prepare($query);
+$stmt->bind_param("isssss", $leader_id, $name, $member_birthdate, $member_contact, $member_precinct, $member_photo_name);
+$stmt->execute();
         }
 
         echo json_encode(['status' => 200, 'message' => 'Leader and members created successfully']);
@@ -109,6 +120,7 @@ if (isset($_POST['save_leader'])) {
     }
     $stmt->close();
 }
+
 
 
 
