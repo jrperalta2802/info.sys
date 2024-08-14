@@ -6,9 +6,10 @@
                 <h5 class="modal-title" id="exampleModalLabel">View Leader</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+           <div class="modal-body">
                 <div class="mb-3 text-center">
                     <img id="view_leader_photo" src="" alt="Leader Photo" class="img-fluid rounded" style="max-width: 150px;">
+                    <img id="view_qr_code" src="" alt="" class="img-fluid rounded" style="max-width: 100px;">
                 </div>
                 <p><strong>Leader UID:</strong> <span id="view_uid"></span></p>
                 <div class="row">
@@ -64,6 +65,7 @@
                                 <th>Birthdate</th>
                                 <th>Contact Number</th>
                                 <th>Precinct</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="membersTableBody">
@@ -73,7 +75,10 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+               <div class="modal-footer">
+                    <button type="button" class="btn btn-success generateQRBtn">Generate QR Code</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>

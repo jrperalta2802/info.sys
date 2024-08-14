@@ -201,12 +201,37 @@ $(document).on('click', '.viewLeaderBtn', function () {
                         '<td>' + member.member_birthdate + '</td>' +
                         '<td>' + member.member_contact + '</td>' +
                         '<td>' + member.member_precinct + '</td>' +
+                        '<td><button type="button" class="btn btn-success popover-btn" data-container="body" data-toggle="popover" = data-bs-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">Info</button></td>' +
                         '</tr>';
                     membersTableBody.append(row);
-                });
+                })
 
+                $(document).ready(function(){
+                    $('[data-toggle="popover"]').popover({
+                        placement : 'right',
+                        trigger : 'focus',
+                        html : true,
+                        content : '<div class="media"><img src="db/uploads/leaders/1x1.png" class="mr-3" alt="QR Code"></div>'
+                    });
+                });
+                // Clear the previous QR code
+                $('#view_qr_code').attr('src', '');
+
+                // Show the modal
                 $('#leaderViewModal').modal('show');
             }
+        }
+    });
+});
+
+// Generate QR Code on button click
+$(document).on('click', '.generateQRBtn', function () {
+    var leader_id = $('#view_uid').text(); // Get the leader UID from the modal
+    $.ajax({
+        type: "GET",
+        url: "db/generateQRCode.php?leader_id=" + leader_id,
+        success: function (response) {
+            $('#view_qr_code').attr('src', 'data:image/png;base64,' + response);
         }
     });
 });

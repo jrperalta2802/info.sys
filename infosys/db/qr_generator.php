@@ -9,7 +9,7 @@ if ($con->connect_error) {
     die("connection failed: " . $con->connect_error);
 }
 
-// Query to fetch data for a leader or member
+// Query to fetch data for a leader
 $sql = "SELECT UID, full_name, precint_no, barangay FROM leaders WHERE id = ?";
 $stmt = $con->prepare($sql);
 $stmt->bind_param("i", $id);
