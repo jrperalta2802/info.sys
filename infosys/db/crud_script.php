@@ -205,7 +205,7 @@ $(document).on('click', '.viewLeaderBtn', function () {
                         '</tr>';
                     membersTableBody.append(row);
                 })
-
+//last work
                 $(document).ready(function(){
                     $('[data-toggle="popover"]').popover({
                         placement : 'right',
