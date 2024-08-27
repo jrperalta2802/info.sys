@@ -4,11 +4,11 @@
     color: red
   }
  </style>
-<div class="modal fade" id="leaderAddModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="leaderAddModal" tabindex="-1"  aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Add Leader</h5>
+                <h5 class="modal-title">Add Leader</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="saveLeader" method="POST" enctype="multipart/form-data">
@@ -90,22 +90,22 @@
                             <div id="members-container">
                                 <div class="form-row row member-form">
                                     <div class="col-md-4 mb-3">
-                                        <label for="member_name">Full Name</label>
+                                        <label>Full Name</label>
                                         <span class="star">*</span>
                                         <input type="text" class="form-control" name="member_name[]" required>
                                     </div>
                                     <div class="col-md-3 mb-3">
-                                        <label for="member_birthdate">Birthdate</label>
+                                        <label>Birthdate</label>
                                         <span class="star">*</span>
                                         <input type="date" class="form-control" name="member_birthdate[]" required>
                                     </div>
                                     <div class="col-md-2 mb-3">
-                                        <label for="member_contact">Contact Number</label>
+                                        <label>Contact Number</label>
                                         <span class="star">*</span>
                                         <input type="tel" class="form-control" name="member_contact[]" placeholder="09XX-XXX-XXXX" pattern="[0-9]{4}-[0-9]{3}-[0-9]{4}" required>
                                     </div>
                                     <div class="col-md-3 mb-3">
-                                        <label for="member_precinct">Precinct No.</label>
+                                        <label>Precinct No.</label>
                                         <span class="star">*</span>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
@@ -118,7 +118,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-3 mb-3">
-                                        <label for="member_photo">Member Photo</label>
+                                        <label>Member Photo</label>
                                         <span class="star">*</span>
                                         <input type="file" class="form-control" name="member_photo[]">
                                     </div>

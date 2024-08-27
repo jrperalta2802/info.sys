@@ -23,8 +23,10 @@ header("Pragma: no-cache");
     <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
 
     <!-- Bootstrap CSS -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
+    
 
     <!-- DataTables CSS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css"/>
@@ -109,8 +111,8 @@ header("Pragma: no-cache");
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4>List of Leaders</h4>
-                    <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#leaderAddModal">
-                        <i class="fas fa-plus"></i> Add
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#leaderAddModal">
+                        Add <i class="fa fa-plus-square"></i> 
                     </button>
                 </div>
                 <div class="card-body">

@@ -1,55 +1,56 @@
 <!-- View Leader Modal -->
-<div class="modal fade" id="leaderViewModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+ 
+<div class="modal fade" id="leaderViewModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">View Leader</h5>
+                <h5 class="modal-title" >View Leader</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
            <div class="modal-body">
                 <div class="mb-3 text-center">
                     <img id="view_leader_photo" src="" alt="Leader Photo" class="img-fluid rounded" style="max-width: 150px;">
-                    <img id="view_qr_code" src="" alt="" class="img-fluid rounded" style="max-width: 100px;">
+                    <img id="view_leader_qr_code" src="" alt="" class="img-fluid rounded" style="max-width: 150px;"> 
                 </div>
                 <p><strong>Leader UID:</strong> <span id="view_uid"></span></p>
                 <div class="row">
                     <div class="form-group col-md-3">
-                        <label for="">Barangay</label>
+                        <label>Barangay</label>
                         <p id="view_barangay" class="form-control"></p>
                     </div>
                     <div class="form-group col-md-4">
-                        <label for="">Full Name</label>
+                        <label>Full Name</label>
                         <p id="view_full_name" class="form-control"></p>
                     </div>
                     <div class="form-group col-md-3">
-                        <label for="">Contact Number</label>
+                        <label>Contact Number</label>
                         <p id="view_contact_number" class="form-control"></p>
                     </div>
                     <div class="form-group col-md-2">
-                        <label for="">Precinct No.</label>
+                        <label>Precinct No.</label>
                         <p id="view_precint_no" class="form-control"></p>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="form-group col-md-5">
-                        <label for="">Address</label>
+                        <label>Address</label>
                         <p id="view_address" class="form-control"></p>
                     </div>
                     <div class="form-group col-md-2">
-                        <label for="">Civil Status</label>
+                        <label>Civil Status</label>
                         <p id="view_civil_status" class="form-control"></p>
                     </div>
                     <div class="form-group col-md-2">
-                        <label for="">Birthdate</label>
+                        <label>Birthdate</label>
                         <p id="view_birthdate" class="form-control"></p>
                     </div>
                     <div class="form-group col-md-1">
-                        <label for="">Age</label>
+                        <label>Age</label>
                         <p id="view_age" class="form-control"></p>
                     </div>
                     <div class="form-group col-md-2">
-                        <label for="">Sex</label>
+                        <label>Sex</label>
                         <p id="view_sex" class="form-control"></p>
                     </div>
                 </div>
@@ -60,7 +61,7 @@
                         <thead>
                             <tr>
                                 <th>Photo</th>
-                                <th>UID</th>
+                                <th>UIDM</th>
                                 <th>Full Name</th>
                                 <th>Birthdate</th>
                                 <th>Contact Number</th>
@@ -76,7 +77,7 @@
             </div>
             <div class="modal-footer">
                <div class="modal-footer">
-                    <button type="button" class="btn btn-success generateQRBtn">Generate QR Code</button>
+                    <button type="button" class="btn btn-success generateQRBtn"><i class="fa fa-qrcode"></i></button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>

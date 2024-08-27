@@ -19,7 +19,7 @@ if (isset($_GET['leader_id'])) {
         $barangay = $row['barangay'];
 
         // Data to encode in the QR code
-        $data = "ID $UID\nName $full_name\nPrecinct $precint_no\nAddress $barangay";
+        $data = "ID : $UID\nName : $full_name\nPrecinct : $precint_no\nAddress : $barangay";
 
         // Generate QR code
         ob_start();

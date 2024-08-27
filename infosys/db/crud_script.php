@@ -196,26 +196,26 @@ $(document).on('click', '.viewLeaderBtn', function () {
                 res.data.members.forEach(function (member) {
                     var row = '<tr>' +
                         '<td><img src="/info.sys/infosys/db/uploads/members/' + member.member_photo + '" alt="" class="img-fluid rounded" style="max-width: 50px;"></td>' +
-                        '<td>' + member.UID + '</td>' + // Display member UID
+                        '<td>' + member.UIDM + '</td>' + // Display member UID
                         '<td>' + member.member_name + '</td>' +
                         '<td>' + member.member_birthdate + '</td>' +
                         '<td>' + member.member_contact + '</td>' +
                         '<td>' + member.member_precinct + '</td>' +
-                        '<td><button type="button" class="btn btn-success popover-btn" data-container="body" data-toggle="popover" = data-bs-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">Info</button></td>' +
+                        '<td><button type="button" class="btn btn-success popover-btn generateMemberQRBtn" data-container="body" data-toggle="popover" data-member-id="' + member.UIDM + '"><i class="fa fa-qrcode"></i></button></td>' +
                         '</tr>';
                     membersTableBody.append(row);
                 })
-//last work
+//QR Code
                 $(document).ready(function(){
                     $('[data-toggle="popover"]').popover({
                         placement : 'right',
-                        trigger : 'focus',
+                        trigger : 'click',
                         html : true,
-                        content : '<div class="media"><img src="db/uploads/leaders/1x1.png" class="mr-3" alt="QR Code"></div>'
+                        content : '<div class="media"><img id="view_qr_code" src="" alt="" class="img-thumbnail rounded"></div>'
                     });
                 });
                 // Clear the previous QR code
-                $('#view_qr_code').attr('src', '');
+                $('#view_leader_qr_code').attr('src', '');
 
                 // Show the modal
                 $('#leaderViewModal').modal('show');
@@ -231,7 +231,31 @@ $(document).on('click', '.generateQRBtn', function () {
         type: "GET",
         url: "db/generateQRCode.php?leader_id=" + leader_id,
         success: function (response) {
+            $('#view_leader_qr_code').attr('src', 'data:image/png;base64,' + response);
+        }
+    });
+});
+
+$(document).on('click', '.generateMemberQRBtn', function () {
+    var member_id = $(this).data('member-id'); // Get the member UIDM from the button
+
+ 
+ 
+    console.log("Member UIDM: " + member_id);
+
+
+    $.ajax({
+        type: "GET",
+        url: "db/generateMemberQRCode.php",
+        data: {
+            member_id: member_id,
+        },
+        success: function (response) {
+             console.log(response); // Log the response to check for any issues
             $('#view_qr_code').attr('src', 'data:image/png;base64,' + response);
+        },
+         error: function(xhr, status, error) {
+            console.log("Error: " + error);
         }
     });
 });
@@ -261,3 +285,10 @@ $(document).on('click', '.deleteLeaderBtn', function (e) {
     }
 });
 </script>
+
+<style>
+.img-thumbnail {
+  width: 150px;
+  height: auto;
+}
+</style>
