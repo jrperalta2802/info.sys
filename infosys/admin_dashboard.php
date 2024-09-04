@@ -119,6 +119,7 @@ header("Pragma: no-cache");
                     <table id="myTable" class="table table-bordered table-striped">
                         <thead>
                             <tr>
+                                 <th>UID</th>
                                 <th>Barangay</th>
                                 <th>Full Name</th>
                                 <th>Contact Number</th>
@@ -137,6 +138,7 @@ header("Pragma: no-cache");
                                 foreach($query_run as $leader) {
                                     ?>
                                     <tr>
+                                         <td><?= $leader['UID'] ?></td>
                                         <td><?= $leader['barangay'] ?></td>
                                         <td><?= $leader['full_name'] ?></td>
                                         <td><?= $leader['contact_number'] ?></td>
