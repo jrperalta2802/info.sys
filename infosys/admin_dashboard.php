@@ -14,27 +14,35 @@ header("Pragma: no-cache");
 <!doctype html>
 <html lang="en">
 <head>
-<head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+
+    <!-- jQuery -->
+    <script src="includes/js/jquery-3.6.0.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="includes/js/bootstrap.bundle.min.js"></script>
+
+    <!-- AlertifyJS -->
+    <script src="includes/js/alertify.min.js"></script>
 
     <!-- Bootstrap CSS -->
-     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
-    
+    <link href="includes/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- AlertifyJS CSS -->
+    <link rel="stylesheet" href="includes/css/alertify.min.css"/>
 
     <!-- DataTables CSS -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css"/>
+    <link rel="stylesheet" type="text/css" href="includes/css/jquery.dataTables.min.css"/>
 
     <!-- DataTables JS -->
-    <script type="text/javascript" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="includes/js/jquery.dataTables.min.js"></script>
 
-    <title>Admin Dashboard - Information System</title>
+    <!-- Font Awesome 4.7.0 -->
+     <link rel="stylesheet" href="includes/css/font-awesome.min.css"/>
+
+    <title>User Dashboard - Information System</title>
     <style>
         body {
             background-color: #f8f9fa;
@@ -47,7 +55,7 @@ header("Pragma: no-cache");
             color: white;
         }
         .card-body {
-            padding: 10px; /* Adjust the padding as needed */
+            padding: 15px;
         }
         .table th, .table td {
             vertical-align: middle;
@@ -56,27 +64,25 @@ header("Pragma: no-cache");
             margin-right: 5px;
         }
         .dataTables_wrapper {
-    padding: 0px 0; /* Adjust padding as necessary */
-    margin-top: 20px; /* Add some margin to separate controls from the table */
-}
-
-.dataTables_length {
-    float: left; /* Align "Show entries" to the left */
-    margin-bottom: 20px;
-}
-
-.dataTables_filter {
-    float: right; /* Align the search bar to the right */
-    margin-bottom: 20px;
-}
-@media (max-width: 768px) {
-    .dataTables_length,
-    .dataTables_filter {
-        margin-bottom: 10px; /* Add space below controls for smaller screens */
-        width: 100%; /* Make controls full-width */
-        text-align: center; /* Center-align the controls */
-    }
-}
+            padding: 10px 0;
+            margin-top: 20px;
+        }
+        .dataTables_length {
+            float: left;
+            margin-bottom: 20px;
+        }
+        .dataTables_filter {
+            float: right;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 768px) {
+            .dataTables_length,
+            .dataTables_filter {
+                margin-bottom: 10px;
+                width: 100%;
+                text-align: center;
+            }
+        }
     </style>
 </head>
 </head>
