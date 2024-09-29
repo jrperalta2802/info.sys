@@ -73,18 +73,9 @@
               >
                 <nav class="sb-sidenav-menu-nested nav">
                   <a class="nav-link" href="list_leaders.php">List of Leaders</a>
-                  <a class="nav-link" href="layout-sidenav-light.html">List of Members</a>
+                  <a class="nav-link" href="list_members.php">List of Members</a>
                 </nav>
             </div> 
-        <!-- <nav class="sb-sidenav-menu-nested nav">
-                  <a class="nav-link" href="layout-static.html"
-                    >Static Navigation</a
-                  >
-                  <a class="nav-link" href="layout-sidenav-light.html"
-                    >Light Sidenav</a
-                  >
-                </nav>
-                </div> -->
               <a
                 class="nav-link collapsed"
                 href="#"
@@ -168,7 +159,7 @@
                 <div class="sb-nav-link-icon">
                   <i class="fa-regular fa-id-card"></i>
                 </div>
-                Generate ID
+                Generate Report
               </a>
               <a class="nav-link" href="tables.html">
                 <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>

@@ -46,7 +46,9 @@ header("Pragma: no-cache");
      <!-- Font Awesome 6.7.0 JS -->
      <script src="includes/js/font-awesome.all.js" crossorigin="anonymous"></script>
 
-     
+    <!-- Charts JS -->
+    <script src="includes/js/chart.js"></script>
+    
     <title>Admin Dashboard</title>
    
 </head>
@@ -151,12 +153,8 @@ header("Pragma: no-cache");
         <?php include 'includes/footer.php'; ?>
       </div>
 </div>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <!-- Charts -->
          <?php include 'includes/charts.php'; ?>
-        
-
-        <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
      
 </body>
 </html>

@@ -50,7 +50,7 @@ header("Pragma: no-cache");
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
 
-    <title>Admin - List of Leaders</title>
+    <title>Admin - List of Members</title>
     <style>
         body {
             background-color: #f8f9fa;
@@ -110,40 +110,44 @@ header("Pragma: no-cache");
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4>List of Leaders</h4>
-                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#leaderAddModal">
-                        Add <i class="fa fa-plus-square"></i> 
-                    </button>
+                    <h4>List of Members</h4>
                 </div>
                 <div class="card-body">
-                    <table id="myTable" class="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                 <th>UID</th>
-                                <th>Barangay</th>
-                                <th>Full Name</th>
-                                <th>Contact Number</th>
-                                <th>Precinct No.</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            require 'db/dbcon.php';
+    <table id="myTable" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>UID</th>
+                <th>Barangay</th>
+                <th>Leader's Name</th>
+                <th>Member's Full Name</th>
+                <th>Contact Number</th>
+                <th>Precinct No.</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            require 'db/dbcon.php';
 
-                            $query = "SELECT * FROM leaders";
-                            $query_run = mysqli_query($con, $query);
+            $query = "
+                SELECT m.UID, m.full_name, m.contact_number, m.precint_no, l.barangay, l.leaders_name 
+                FROM members m 
+                JOIN leaders l ON m.leader_id = l.UID
+            ";
+            $query_run = mysqli_query($con, $query);
 
-                            if(mysqli_num_rows($query_run) > 0) {
-                                foreach($query_run as $leader) {
-                                    ?>
-                                    <tr>
-                                         <td><?= $leader['UID'] ?></td>
-                                        <td><?= $leader['barangay'] ?></td>
-                                        <td><?= $leader['full_name'] ?></td>
-                                        <td><?= $leader['contact_number'] ?></td>
-                                        <td><?= $leader['precint_no'] ?></td>
-                                        <td>
+            if(mysqli_num_rows($query_run) > 0) {
+                foreach($query_run as $member) {
+                    ?>
+                    <tr>
+                        <td><?= htmlspecialchars($member['UID']) ?></td>
+                        <td><?= htmlspecialchars($member['barangay']) ?></td>
+                        <td><?= htmlspecialchars($member['full_name']) ?></td>
+                        <td><?= htmlspecialchars($member['member_name']) ?></td>
+                        <td><?= htmlspecialchars($member['contact_number']) ?></td>
+                        <td><?= htmlspecialchars($member['precinct_no']) ?></td>
+                        <td>
+                        <td>
                                             <div class="btn-group" role="group">
                                                 <button type="button" value="<?= $leader['id']; ?>" class="printIDBtn btn btn-primary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Print ID"><i class="fa-solid fa-print"></i></button>
                                                 <button type="button" value="<?= $leader['id']; ?>" class="viewLeaderBtn btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="View Leader">View</button>

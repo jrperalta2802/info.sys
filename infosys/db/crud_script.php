@@ -284,6 +284,45 @@ $(document).on('click', '.deleteLeaderBtn', function (e) {
         });
     }
 });
+/*
+$(document).on('click', '.printIDBtn', function (e) {
+    e.preventDefault();
+    var leader_id = $(this).val(); // Get the leader ID from the button
+
+    // Make an AJAX request to get the leader data
+    $.ajax({
+        type: "POST",
+        url: "db/printModal.php",
+        data: {
+            'fetch_leader': true,
+            'leader_id': leader_id
+        },
+        success: function (response) {
+            var res = typeof response === 'object' ? response : jQuery.parseJSON(response);
+            if (res.status == 500) {
+                alert(res.message);
+            } else {
+                // Populate modal fields with the fetched data
+                $('#print_leader_photo').attr('src', res.photo);
+                $('#print_uid').text(res.uid);
+                $('#print_full_name').text(res.full_name);
+                $('#print_contact_number').text(res.contact_number);
+                $('#print_address').text(res.address);
+                
+                // Show the modal
+                $('#printIDModal').modal('show');
+
+                // Trigger print after the modal is displayed
+                $('#printIDModal').on('shown.bs.modal', function () {
+                    window.print();
+                });
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.error('Error fetching data: ', textStatus, errorThrown);
+        }
+    });
+}); */
 </script>
 
 <style>
