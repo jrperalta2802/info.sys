@@ -1,6 +1,6 @@
 <?php
 session_start();
-if (!isset($_SESSION['username']) || $_SESSION['role'] != 'user') {
+if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
     header("Location: index.php");
     exit();
 }
@@ -14,7 +14,7 @@ header("Pragma: no-cache");
 <!doctype html>
 <html lang="en">
 <head>
-   <!-- Required meta tags -->
+    <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="includes/css/styles.css" rel="stylesheet" />
@@ -46,7 +46,13 @@ header("Pragma: no-cache");
      <!-- Font Awesome 6.7.0 JS -->
      <script src="includes/js/font-awesome.all.js" crossorigin="anonymous"></script>
 
-    <title>User Dashboard - Information System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+    <link href="shttps://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.cs" rel="stylesheet"/>
+
+
+    <title>Admin - List of Leaders</title>
     <style>
         body {
             background-color: #f8f9fa;
@@ -90,30 +96,32 @@ header("Pragma: no-cache");
         
     </style>
 </head>
+</head>
 <body class="sb-nav-fixed">
 
 <?php include 'db/addPerson.php'; ?>
 <?php include 'db/editPerson.php'; ?>
 <?php include 'db/viewPerson.php'; ?>
-<?php include 'includes/user_nav.php'; ?>
+<?php include 'includes/nav.php'; ?>
 
 <div id="layoutSidenav_content">
   <main>
           <div class="container-fluid px-4">
-<div class="container mt-4">
+         <div class="container mt-4">
     <div class="row">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4>List of Leaders</h4>
                     <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#leaderAddModal">
-                        <i class="fas fa-plus"></i> Add
+                        Add <i class="fa fa-plus-square"></i> 
                     </button>
                 </div>
                 <div class="card-body">
                     <table id="myTable" class="table table-bordered table-striped">
                         <thead>
                             <tr>
+                                 <th>UID</th>
                                 <th>Barangay</th>
                                 <th>Full Name</th>
                                 <th>Contact Number</th>
@@ -132,12 +140,17 @@ header("Pragma: no-cache");
                                 foreach($query_run as $leader) {
                                     ?>
                                     <tr>
+                                         <td><?= $leader['UID'] ?></td>
                                         <td><?= $leader['barangay'] ?></td>
                                         <td><?= $leader['full_name'] ?></td>
                                         <td><?= $leader['contact_number'] ?></td>
                                         <td><?= $leader['precint_no'] ?></td>
                                         <td>
-                                            <button type="button" value="<?= $leader['id']; ?>" class="viewLeaderBtn btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="View Leader">View</button>
+                                            <div class="btn-group" role="group">
+                                                <button type="button" value="<?= $leader['id']; ?>" class="viewLeaderBtn btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="View Leader">View</button>
+                                                <button type="button" value="<?= $leader['id']; ?>" class="editLeaderBtn btn btn-success btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Leader">Edit</button>
+                                                <button type="button" value="<?= $leader['id']; ?>" class="deleteLeaderBtn btn btn-danger btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Leader">Delete</button>
+                                            </div>
                                         </td>
                                     </tr>
                                     <?php
@@ -157,6 +170,7 @@ header("Pragma: no-cache");
 </main>
 
 <?php include 'db/crud_script.php'; ?>
+
 <script>
     $(document).ready(function() {
         $('#myTable').DataTable({
@@ -174,6 +188,7 @@ header("Pragma: no-cache");
         };
     });
 </script>
+
 <script>
     $(function () {
         $('[data-bs-toggle="tooltip"]').tooltip();
