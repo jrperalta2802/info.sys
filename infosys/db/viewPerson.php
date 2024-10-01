@@ -1,4 +1,4 @@
-<!-- View Leader Modal -->
+<!-- View Modal -->
  
 <div class="modal fade" id="leaderViewModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">

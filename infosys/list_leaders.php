@@ -46,6 +46,11 @@ header("Pragma: no-cache");
      <!-- Font Awesome 6.7.0 JS -->
      <script src="includes/js/font-awesome.all.js" crossorigin="anonymous"></script>
 
+        <!-- HTML2Canvas -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
@@ -92,6 +97,7 @@ header("Pragma: no-cache");
             }
         }
         
+               
     </style>
 </head>
 </head>
@@ -145,7 +151,7 @@ header("Pragma: no-cache");
                                         <td><?= $leader['precint_no'] ?></td>
                                         <td>
                                             <div class="btn-group" role="group">
-                                                <button type="button" value="<?= $leader['id']; ?>" class="printIDBtn btn btn-primary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Print ID"><i class="fa-solid fa-print"></i></button>
+                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#printIdModal" onclick="populateIDModal('leader', '<?= $leader['UID'] ?>')"><i class="fa-solid fa-print"></i></button>
                                                 <button type="button" value="<?= $leader['id']; ?>" class="viewLeaderBtn btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="View Leader">View</button>
                                                 <button type="button" value="<?= $leader['id']; ?>" class="editLeaderBtn btn btn-success btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Leader">Edit</button>
                                                 <button type="button" value="<?= $leader['id']; ?>" class="deleteLeaderBtn btn btn-danger btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Leader">Delete</button>
@@ -167,6 +173,75 @@ header("Pragma: no-cache");
 <?php include 'includes/footer.php'; ?>
 </div>
 </main>
+
+<!-- Print ID Modal -->
+<div class="modal fade" id="printIdModal" tabindex="-1" aria-labelledby="printIdModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: none; width: 650px;">
+    <div class="modal-content" style="border: none; padding: 20px;">
+      <div class="modal-header">
+        <h5 class="modal-title" id="printIdModalLabel">ID Preview</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-3 d-flex justify-content-center">
+        <!-- ID Card Structure -->
+        <div id="id-card" style="background-color: #ba0017; color: white; padding: 10px; border-radius: 10px; width: 3.375in; height: 2.125in; text-align: left; position: relative;">
+          <!-- Logo and Header -->
+          <div style="position: absolute; top: 15px; left: 12px; display: flex; align-items: center;">
+            <img src="db/uploads/logo.png" alt="Logo" style="width: 0.65in; height: auto; margin-right: 8px;">
+            <h4 style="margin: 0; font-size: 0.16in;">Patuloy na Maglilingkod sa Inyo!!</h4>
+          </div>
+
+          <!-- Main Content -->
+          <div style="display: flex; align-items: center; margin-top: 70px;"> <!-- Moved content down -->
+            <!-- Leader's Photo -->
+            <div style="flex: 1;">
+              <img id="print_leader_photo" src="" alt="Leader's Photo" style="width: 1in; height: 1in; border-radius: 5px; background-color: white;">
+            </div>
+
+            <!-- Full Name, Barangay, and UID -->
+            <div style="flex: 2; padding-left: 10px;">
+              <h3 id="print_full_name" style="margin: 0; font-size: 0.22in;"></h3>
+              <p id="print_barangay" style="font-size: 0.18in; margin: 3px 0;"></p>
+              <p id="print_uid" style="font-size: 0.15in; margin: 0;"></p>
+            </div>
+
+            <!-- QR Code -->
+            <div style="flex: 1; text-align: right; position: absolute; bottom: 10px; right: 10px;">
+              <img id="print_qr_code" src="" alt="QR Code" style="width: 0.75in; height: 0.75in;">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="saveAsJPG()">Save as JPG</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function saveAsJPG() {
+    var element = document.getElementById('id-card'); // The ID card element
+    var uid = document.getElementById('print_uid').innerText;
+    html2canvas(element, {
+        scale: 4,
+        useCORS: true, // Enable CORS to allow cross-origin images to render
+        allowTaint: false,
+        backgroundColor: null, // Ensure background color is correctly captured
+        width: element.offsetWidth,
+        height: element.offsetHeight
+    }).then(function(canvas) {
+        var imgData = canvas.toDataURL('image/jpeg', 1.0); // Convert canvas to JPEG format
+        var link = document.createElement('a');
+        link.href = imgData;
+        link.download = uid ? uid + '.jpg' : 'ID-Card.jpg'; // Name of the downloaded file
+        link.click();
+    });
+}
+</script>
+
+
 
 <?php include 'db/crud_script.php'; ?>
 
@@ -198,5 +273,7 @@ header("Pragma: no-cache");
         window.history.pushState(null, '', window.location.href);
     };
 </script>
+
+
 </body>
 </html>

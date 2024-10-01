@@ -1,4 +1,4 @@
-<!-- Add Leader -->
+<!-- Add Modal -->
  <style>
    .star{
     color: red

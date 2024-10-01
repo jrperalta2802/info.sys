@@ -284,7 +284,6 @@ $(document).on('click', '.deleteLeaderBtn', function (e) {
         });
     }
 });
-/*
 $(document).on('click', '.printIDBtn', function (e) {
     e.preventDefault();
     var leader_id = $(this).val(); // Get the leader ID from the button
@@ -306,23 +305,90 @@ $(document).on('click', '.printIDBtn', function (e) {
                 $('#print_leader_photo').attr('src', res.photo);
                 $('#print_uid').text(res.uid);
                 $('#print_full_name').text(res.full_name);
-                $('#print_contact_number').text(res.contact_number);
-                $('#print_address').text(res.address);
-                
+                $('#print_barangay').text(res.barangay);
+
+                // Generate QR code from the leader's UID
+                $.ajax({
+                    type: "GET",
+                    url: "db/generateQRCode.php?leader_id=" + leader_id,
+                    success: function (qrResponse) {
+                        $('#print_qr_code').attr('src', 'data:image/png;base64,' + qrResponse);
+                    }
+                });
+
                 // Show the modal
                 $('#printIDModal').modal('show');
-
-                // Trigger print after the modal is displayed
-                $('#printIDModal').on('shown.bs.modal', function () {
-                    window.print();
-                });
             }
         },
         error: function (jqXHR, textStatus, errorThrown) {
             console.error('Error fetching data: ', textStatus, errorThrown);
         }
     });
-}); */
+});
+
+function populateIDModal(type, id) {
+    // Reset the modal content
+    document.getElementById('print_full_name').innerText = '';
+    document.getElementById('print_uid').innerText = '';
+    document.getElementById('print_barangay').innerText = '';
+    document.getElementById('print_leader_photo').src = '';
+    document.getElementById('print_qr_code').src = '';
+
+    // Determine if it's for a leader or member and set the fetch URL accordingly
+    let fetchUrl;
+    if (type === 'leader') {
+        fetchUrl = `db/printModal.php?leader_id=${id}`;
+    }
+
+    // Fetch leader data and QR code via AJAX
+    $.ajax({
+        type: "GET",
+        url: fetchUrl,
+        success: function (response) {
+            var res = typeof response === 'object' ? response : jQuery.parseJSON(response);
+            if (res.status == 500) {
+                alert(res.message);
+            } else {
+                // Populate the modal with the leader's data
+                document.getElementById('print_full_name').innerText = res.full_name;
+                document.getElementById('print_uid').innerText = res.uid;
+                document.getElementById('print_barangay').innerText = res.barangay;
+
+                // Set leader photo
+                document.getElementById('print_leader_photo').src = res.photo;
+
+                // Fetch QR code and set it in the modal
+                $.ajax({
+                    type: "GET",
+                    url: `db/generateQRCode.php?leader_id=${id}`,
+                    success: function (qrResponse) {
+                        document.getElementById('print_qr_code').src = 'data:image/png;base64,' + qrResponse;
+                    }
+                });
+
+                // Show the modal
+                $('#printIdModal').modal('show');
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.error('Error fetching leader data: ', textStatus, errorThrown);
+        }
+    });
+}
+/**
+function printDiv(divId) {
+    const printContents = document.getElementById(divId).innerHTML;
+    const originalContents = document.body.innerHTML;
+
+    const printWindow = window.open('', '', 'height=600,width=800');
+    printWindow.document.write('<html><head><title>ID Print</title></head><body>');
+    printWindow.document.write(printContents);
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+    printWindow.close();
+} */
 </script>
 
 <style>

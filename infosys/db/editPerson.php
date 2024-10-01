@@ -1,4 +1,4 @@
-<!-- Edit Leader Modal -->
+<!-- Edit Modal -->
 <div class="modal fade" id="leaderEditModal" tabindex="-1"  aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
