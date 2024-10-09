@@ -1,15 +1,4 @@
-<?php
-session_start();
-if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
-    header("Location: index.php");
-    exit();
-}
-
-// Prevent caching
-header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-header("Cache-Control: post-check=0, pre-check=0", false);
-header("Pragma: no-cache");
-?>
+<?php include 'db/sessions/admin_session.php'; ?>
 
 <!doctype html>
 <html lang="en">
@@ -53,7 +42,7 @@ header("Pragma: no-cache");
    
 </head>
 <body class="sb-nav-fixed">
-  <?php include 'includes/nav.php'; ?>
+  <?php include 'includes/nav/admin_nav.php'; ?>
 <div id="layoutSidenav_content">
         <main>
           <div class="container-fluid px-4">

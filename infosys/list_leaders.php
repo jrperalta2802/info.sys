@@ -1,15 +1,4 @@
-<?php
-session_start();
-if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
-    header("Location: index.php");
-    exit();
-}
-
-// Prevent caching
-header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-header("Cache-Control: post-check=0, pre-check=0", false);
-header("Pragma: no-cache");
-?>
+<?php include 'db/sessions/admin_session.php'; ?>
 
 <!doctype html>
 <html lang="en">
@@ -43,11 +32,11 @@ header("Pragma: no-cache");
     <!-- Font Awesome 4.7.0 -->
      <link rel="stylesheet" href="includes/css/font-awesome.min.css"/>
 
-     <!-- Font Awesome 6.7.0 JS -->
-     <script src="includes/js/font-awesome.all.js" crossorigin="anonymous"></script>
+    <!-- Font Awesome 6.7.0 JS -->
+    <script src="includes/js/font-awesome.all.js" crossorigin="anonymous"></script>
 
-        <!-- HTML2Canvas -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- HTML2Canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 
 
@@ -106,7 +95,7 @@ header("Pragma: no-cache");
 <?php include 'db/addPerson.php'; ?>
 <?php include 'db/editPerson.php'; ?>
 <?php include 'db/viewPerson.php'; ?>
-<?php include 'includes/nav.php'; ?>
+<?php include 'includes/nav/admin_nav.php'; ?>
 
 <div id="layoutSidenav_content">
   <main>

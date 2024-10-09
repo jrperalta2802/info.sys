@@ -155,7 +155,7 @@
                 </nav>
               </div>
               <div class="sb-sidenav-menu-heading">Addons</div>
-              <a class="nav-link" href="id_card.php">
+              <a class="nav-link" href="#">
                 <div class="sb-nav-link-icon">
                   <i class="fa-regular fa-id-card"></i>
                 </div>
