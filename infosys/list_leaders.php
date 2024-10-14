@@ -85,8 +85,11 @@
                 text-align: center;
             }
         }
-        
-               
+        .img-thumbnail {
+            width: 150px;
+            height: auto;
+            }
+                        
     </style>
 </head>
 </head>
@@ -232,7 +235,8 @@ function saveAsJPG() {
 
 
 
-<?php include 'db/crud_script.php'; ?>
+<script src="db/js/dataManagement.js"></script>
+
 
 <script>
     $(document).ready(function() {
