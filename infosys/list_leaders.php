@@ -24,10 +24,10 @@
     <link rel="stylesheet" href="includes/css/alertify.min.css"/>
 
     <!-- DataTables CSS -->
-    <link rel="stylesheet" type="text/css" href="includes/css/jquery.dataTables.min.css"/>
+    <link rel="stylesheet"  href="includes/css/jquery.dataTables.min.css"/>
 
     <!-- DataTables JS -->
-    <script type="text/javascript" src="includes/js/jquery.dataTables.min.js"></script>
+    <script src="includes/js/jquery.dataTables.min.js"></script>
 
     <!-- Font Awesome 4.7.0 -->
      <link rel="stylesheet" href="includes/css/font-awesome.min.css"/>
