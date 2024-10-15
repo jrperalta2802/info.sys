@@ -9,7 +9,7 @@
     <link href="includes/css/styles.css" rel="stylesheet" />
     <script src="includes/js/scripts.js"></script>
     <!-- jQuery -->
-    <script src="includes/js/jquery-3.6.0.min.js"></script>
+    <script src="includes/js/jquery-3.7.1.min.js"></script>
 
     <!-- Bootstrap JS -->
     <script src="includes/js/bootstrap.bundle.min.js"></script>

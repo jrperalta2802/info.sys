@@ -8,8 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="includes/css/styles.css" rel="stylesheet" />
     <script src="includes/js/scripts.js"></script>
-    <!-- jQuery -->
-    <script src="includes/js/jquery-3.6.0.min.js"></script>
+       <!-- jQuery -->
+    <script src="includes/js/jquery-3.7.1.min.js"></script>
 
     <!-- Bootstrap JS -->
     <script src="includes/js/bootstrap.bundle.min.js"></script>
@@ -28,7 +28,7 @@
 
     <!-- DataTables JS -->
     <script src="includes/js/jquery.dataTables.min.js"></script>
-
+   
     <!-- Font Awesome 4.7.0 -->
      <link rel="stylesheet" href="includes/css/font-awesome.min.css"/>
 
@@ -114,48 +114,56 @@
                     </button>
                 </div>
                 <div class="card-body">
-                    <table id="myTable" class="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                 <th>UID</th>
-                                <th>Barangay</th>
-                                <th>Full Name</th>
-                                <th>Contact Number</th>
-                                <th>Precinct No.</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            require 'db/dbcon.php';
+                     <table id="myTable" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th></th> <!-- Column for the expandable button -->
+                <th>UID</th>
+                <th>Barangay</th>
+                <th>Full Name</th>
+                <th>Contact Number</th>
+                <th>Precinct No.</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            require 'db/dbcon.php';
 
-                            $query = "SELECT * FROM leaders";
-                            $query_run = mysqli_query($con, $query);
+            $query = "SELECT * FROM leaders";
+            $query_run = mysqli_query($con, $query);
 
-                            if(mysqli_num_rows($query_run) > 0) {
-                                foreach($query_run as $leader) {
-                                    ?>
-                                    <tr>
-                                         <td><?= $leader['UID'] ?></td>
-                                        <td><?= $leader['barangay'] ?></td>
-                                        <td><?= $leader['full_name'] ?></td>
-                                        <td><?= $leader['contact_number'] ?></td>
-                                        <td><?= $leader['precint_no'] ?></td>
-                                        <td>
-                                            <div class="btn-group" role="group">
-                                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#printIdModal" onclick="populateIDModal('leader', '<?= $leader['UID'] ?>')"><i class="fa-solid fa-print"></i></button>
-                                                <button type="button" value="<?= $leader['id']; ?>" class="viewLeaderBtn btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="View Leader">View</button>
-                                                <button type="button" value="<?= $leader['id']; ?>" class="editLeaderBtn btn btn-success btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Leader">Edit</button>
-                                                <button type="button" value="<?= $leader['id']; ?>" class="deleteLeaderBtn btn btn-danger btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Leader">Delete</button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <?php
-                                }
-                            }
-                            ?>
-                        </tbody>
-                    </table>
+            if(mysqli_num_rows($query_run) > 0) {
+                foreach($query_run as $leader) {
+                    ?>
+                    <tr>
+                        <td>
+                            <button class="btn btn-sm btn-primary expandBtn" data-leader-id="<?= $leader['id'] ?>">
+                                +
+                            </button>
+                        </td>
+                        <td><?= $leader['UID'] ?></td>
+                        <td><?= $leader['barangay'] ?></td>
+                        <td><?= $leader['full_name'] ?></td>
+                        <td><?= $leader['contact_number'] ?></td>
+                        <td><?= $leader['precint_no'] ?></td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#printIdModal" onclick="populateIDModal('leader', '<?= $leader['UID'] ?>')"><i class="fa-solid fa-print"></i></button>
+                                <button type="button" value="<?= $leader['id']; ?>" class="viewLeaderBtn btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="View Leader">View</button>
+                                <button type="button" value="<?= $leader['id']; ?>" class="editLeaderBtn btn btn-success btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Leader">Edit</button>
+                                <button type="button" value="<?= $leader['id']; ?>" class="deleteLeaderBtn btn btn-danger btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Leader">Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <?php
+                }
+            }
+            ?>
+        </tbody>
+    </table>
+
+
                 </div>
             </div>
         </div>
@@ -239,21 +247,69 @@ function saveAsJPG() {
 
 
 <script>
-    $(document).ready(function() {
-        $('#myTable').DataTable({
-            "order": [], // Default no initial sorting
-            "columnDefs": [
-                { "orderable": false, "targets": -1 } // Disable ordering on the last column (Actions)
-            ]
-        });
+$(document).ready(function() {
+    var table = $('#myTable').DataTable();
 
-        $('[data-bs-toggle="tooltip"]').tooltip();
+    $('#myTable tbody').on('click', 'button.expandBtn', function () {
+        var tr = $(this).closest('tr');
+        var row = table.row(tr);
 
-        window.history.pushState(null, '', window.location.href);
-        window.onpopstate = function() {
-            window.history.pushState(null, '', window.location.href);
-        };
+        if (row.child.isShown()) {
+            // If already shown, hide it
+            row.child.hide();
+            $(this).text('+'); // Change button text back to '+'
+        } else {
+            // Get the leader ID from the button's data attribute
+            var leaderId = $(this).data('leader-id');
+
+            console.log('Fetching members for Leader ID:', leaderId); // Debug log
+
+            // Call the existing PHP script to fetch members
+            $.ajax({
+                url: 'db/fetch_members.php?leader_id=' + leaderId,
+                method: 'GET',
+                success: function(response) {
+                    var result = JSON.parse(response); // Parse the JSON response
+                    if (result.status === 200) {
+                        // Display members in the child row
+                        row.child(format(result.data.members)).show();
+                        $(this).text('-'); // Change button text to '-'
+                    } else {
+                        row.child('<div>Error: ' + result.message + '</div>').show();
+                    }
+                }.bind(this), // Use bind to maintain the context of 'this'
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error('Error fetching members:', textStatus, errorThrown);
+                    row.child('<div>Error fetching members</div>').show();
+                }
+            });
+        }
     });
+});
+
+// Function to format members for display
+function format(members) {
+    // Create a table or any HTML structure you prefer to show members
+    var html = '<h5>Members</h5><table class="table table-bordered table-striped"><thead><tr><th>UIDM</th><th>Full Name</th><th>Contact Number</th><th>Precinct</th><th>Actions</th></tr></thead><tbody>';
+    $.each(members, function(index, member) {
+        html += '<tr>' +
+                '<td>' + member.UIDM + '</td>' +
+                '<td>' + member.member_name + '</td>' +
+                '<td>' + member.member_contact + '</td>' +
+                '<td>' + member.member_precinct + '</td>' +
+                '<td>' +
+                    '<div class="btn-group" role="group">' +
+                        '<button class="btn btn-primary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="View Member"><i class="fa-solid fa-print"></i></button>' +
+                    '</div>' +
+                '</td>' +
+                '</tr>';
+    });
+    html += '</tbody></table>';
+    return html; // Return the HTML to be displayed
+}
+
+
+
 </script>
 
 <script>
