@@ -215,7 +215,8 @@
             <div style="flex: 2; padding-left: 10px;">
               <h3 id="print_full_name" style="margin: 0; font-size: 0.22in;"></h3>
               <p id="print_barangay" style="font-size: 0.18in; margin: 3px 0;"></p>
-              <p id="print_uid" style="font-size: 0.15in; margin: 0;"></p>
+              <p id="print_precinct" style="font-size: 0.15in; margin: 0;"></p>
+              <input type="hidden" id="print_uid"/>
             </div>
 
             <!-- QR Code -->
@@ -229,8 +230,7 @@
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
     <button type="button" class="btn btn-primary" onclick="saveAsPDF()">Save as PDF</button>
     <button type="button" class="btn btn-success" onclick="printID()">Print</button>
-</div>
-
+        </div>
     </div>
   </div>
 </div>

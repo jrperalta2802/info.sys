@@ -8,8 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="includes/css/styles.css" rel="stylesheet" />
     <script src="includes/js/scripts.js"></script>
-    <!-- jQuery -->
-       <script src="includes/js/jquery-3.7.1.min.js"></script>
+       <!-- jQuery -->
+    <script src="includes/js/jquery-3.7.1.min.js"></script>
 
     <!-- Bootstrap JS -->
     <script src="includes/js/bootstrap.bundle.min.js"></script>
@@ -24,20 +24,24 @@
     <link rel="stylesheet" href="includes/css/alertify.min.css"/>
 
     <!-- DataTables CSS -->
-    <link rel="stylesheet" type="text/css" href="includes/css/jquery.dataTables.min.css"/>
+    <link rel="stylesheet"  href="includes/css/jquery.dataTables.min.css"/>
 
     <!-- DataTables JS -->
-    <script type="text/javascript" src="includes/js/jquery.dataTables.min.js"></script>
+    <script src="includes/js/jquery.dataTables.min.js"></script>
 
-    <!-- Font Awesome 4.7.0 -->
-     <link rel="stylesheet" href="includes/css/font-awesome.min.css"/>
+    <!-- Font Awesome 6.7.0 JS -->
+    <script src="includes/js/font-awesome.all.js" crossorigin="anonymous"></script>
 
-     <!-- Font Awesome 6.7.0 JS -->
-     <script src="includes/js/font-awesome.all.js" crossorigin="anonymous"></script>
+    <!-- HTML2Canvas-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script> 
+
+    <!-- JSPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 
     <title>User Dashboard - Information System</title>
     <style>
-        body {
+         body {
             background-color: #f8f9fa;
         }
         .navbar {
@@ -103,6 +107,7 @@
                     <table id="myTable" class="table table-bordered table-striped">
                         <thead>
                             <tr>
+                                <th></th> <!-- Column for the expandable button -->
                                 <th>Barangay</th>
                                 <th>Full Name</th>
                                 <th>Contact Number</th>
@@ -121,12 +126,22 @@
                                 foreach($query_run as $leader) {
                                     ?>
                                     <tr>
+                                          <td>
+                            <button class="btn btn-sm btn-primary expandBtn" data-leader-id="<?= $leader['id'] ?>">
+                                +
+                            </button>
+                        </td>
                                         <td><?= $leader['barangay'] ?></td>
                                         <td><?= $leader['full_name'] ?></td>
                                         <td><?= $leader['contact_number'] ?></td>
                                         <td><?= $leader['precint_no'] ?></td>
                                         <td>
-                                            <button type="button" value="<?= $leader['id']; ?>" class="viewLeaderBtn btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="View Leader">View</button>
+                                             <div class="btn-group" role="group"></div>
+                                             <div class="btn-group" role="group">
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#printIdModal" onclick="populateIDModal('leader', '<?= htmlspecialchars($leader['UID'], ENT_QUOTES, 'UTF-8') ?>')">
+    <i class="fa-solid fa-print"></i>
+</button>
+                                <button type="button" value="<?= $leader['id']; ?>" class="viewLeaderBtn btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="View Leader">View</button>
                                         </td>
                                     </tr>
                                     <?php
@@ -141,28 +156,187 @@
     </div>
 </div>
 </div>
-<?php include 'includes/footer.php'; ?>
 </div>
 </main>
 
-<?php include 'db/crud_script.php'; ?>
+<!-- Print ID Modal -->
+<div class="modal fade" id="printIdModal" tabindex="-1" aria-labelledby="printIdModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: none; width: 650px;">
+    <div class="modal-content" style="border: none; padding: 20px;">
+      <div class="modal-header">
+        <h5 class="modal-title" id="printIdModalLabel">ID Preview</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-3 d-flex justify-content-center">
+        <!-- ID Card Structure -->
+        <div id="id-card" 
+             style="background-image: url('db/uploads/BACKGROUNDCARESID_BG.jpg'); 
+                    background-size: cover; 
+                    color: black; 
+                    padding: 10px; 
+                    border-radius: 10px; 
+                    width: 3.375in; 
+                    height: 2.125in; 
+                    text-align: left; 
+                    position: relative;">
+          <!-- Logo and Header -->
+          <div style="position: absolute; top: 15px; left: 12px; display: flex; align-items: center;">
+            <img src="db/uploads/logo.jpg" alt="Logo" style="width: 0.65in; height: auto; margin-right: 8px;">
+            <h4 style="margin: 0; font-size: 0.16in;">Patuloy na Maglilingkod sa Inyo</h4>
+          </div>
+
+          <!-- Main Content -->
+          <div style="display: flex; align-items: center; margin-top: 70px;"> <!-- Moved content down -->
+            <!-- Leader's/Member's Photo -->
+            <div style="flex: 1;">
+              <img id="print_leader_photo" src="" alt="Leader's Photo" style="width: 1in; height: 1in; border-radius: 3px; background-color: transparent;">
+            </div>
+
+            <!-- Full Name, Barangay, and UID -->
+            <div style="flex: 2; padding-left: 10px;">
+              <h3 id="print_full_name" style="margin: 0; font-size: 0.22in;"></h3>
+              <p id="print_barangay" style="font-size: 0.18in; margin: 3px 0;"></p>
+              <p id="print_precinct" style="font-size: 0.15in; margin: 0;"></p>
+              <input type="hidden" id="print_uid"/>
+            </div>
+
+            <!-- QR Code -->
+            <div style="flex: 1; text-align: right; position: absolute; bottom: 10px; right: 10px;">
+              <img id="print_qr_code" src="" alt="QR Code" style="width: 0.58in; height: 0.58in;">
+            </div>
+          </div>
+        </div>
+      </div>
+     <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    <button type="button" class="btn btn-primary" onclick="saveAsPDF()">Save as PDF</button>
+    <button type="button" class="btn btn-success" onclick="printID()">Print</button>
+        </div>
+    </div>
+  </div>
+</div>
+
+
 <script>
-    $(document).ready(function() {
-        $('#myTable').DataTable({
-            "order": [], // Default no initial sorting
-            "columnDefs": [
-                { "orderable": false, "targets": -1 } // Disable ordering on the last column (Actions)
-            ]
+function saveAsPDF() {
+    var element = document.getElementById('id-card'); 
+    var uid = document.getElementById('print_uid').innerText; 
+
+   
+    html2canvas(element, {
+        scale: 4, 
+        useCORS: true, 
+        allowTaint: false,
+        backgroundColor: null, 
+        width: element.offsetWidth,
+        height: element.offsetHeight
+    }).then(function(canvas) {
+        var imgData = canvas.toDataURL('image/jpeg', 1.0); 
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({
+            orientation: 'landscape', 
+            unit: 'in', 
+            format: [3.375, 2.125]
         });
 
-        $('[data-bs-toggle="tooltip"]').tooltip();
+        pdf.addImage(imgData, 'JPEG', 0, 0, 3.375, 2.125);
 
-        window.history.pushState(null, '', window.location.href);
-        window.onpopstate = function() {
-            window.history.pushState(null, '', window.location.href);
-        };
+        pdf.save(uid ? uid + '.pdf' : 'ID-Card.pdf');
     });
+}
+
+function printID() {
+    var element = document.getElementById('id-card'); 
+    var uid = document.getElementById('print_uid').innerText; 
+
+    html2canvas(element, {
+        scale: 4, 
+        useCORS: true, 
+        allowTaint: false,
+        backgroundColor: null,
+        width: element.offsetWidth,
+        height: element.offsetHeight
+    }).then(function(canvas) {
+        var imgData = canvas.toDataURL('image/jpeg', 1.0); 
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({
+            orientation: 'landscape', 
+            unit: 'in',
+            format: [3.375, 2.125] 
+        });
+
+        pdf.addImage(imgData, 'JPEG', 0, 0, 3.375, 2.125);
+
+        var pdfData = pdf.output('blob');
+        var pdfUrl = URL.createObjectURL(pdfData);
+        window.open(pdfUrl); 
+    });
+}
 </script>
+
+<script src="db/js/dataManagement.js"></script>
+
+<script>
+$(document).ready(function() {
+    var table = $('#myTable').DataTable();
+
+    $('#myTable tbody').on('click', 'button.expandBtn', function () {
+        var tr = $(this).closest('tr');
+        var row = table.row(tr);
+
+        if (row.child.isShown()) {
+            row.child.hide();
+            $(this).text('+'); 
+        } else {        
+            var leaderId = $(this).data('leader-id');
+            console.log('Fetching members for Leader ID:', leaderId);
+            $.ajax({
+                url: 'db/fetch_members.php?leader_id=' + leaderId,
+                method: 'GET',
+                success: function(response) {
+                    var result = JSON.parse(response); 
+                    if (result.status === 200) {
+                        row.child(format(result.data.members)).show();
+                        $(this).text('-'); 
+                    } else {
+                        row.child('<div>Error: ' + result.message + '</div>').show();
+                    }
+                }.bind(this), 
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error('Error fetching members:', textStatus, errorThrown);
+                    row.child('<div>Error fetching members</div>').show();
+                }
+            });
+        }
+    });
+});
+
+// Function to format members for display
+function format(members) {
+    var html = '<h5>Members</h5><table class="table table-bordered table-striped"><thead><tr><th>UIDM</th><th>Full Name</th><th>Contact Number</th><th>Precinct</th><th>Actions</th></tr></thead><tbody>';
+    
+    $.each(members, function(index, member) {
+        html += '<tr>' +
+                '<td>' + member.UIDM + '</td>' +
+                '<td>' + member.member_name + '</td>' +
+                '<td>' + member.member_contact + '</td>' +
+                '<td>' + member.member_precinct + '</td>' +
+                '<td>' +
+                    '<div class="btn-group" role="group">' +
+                        '<button class="btn btn-primary btn-sm" onclick="populateIDModal(\'member\', \'' + member.UIDM + '\')" data-bs-toggle="tooltip" data-bs-placement="top" title="Print Member"><i class="fa-solid fa-print"></i></button>' +
+                    '</div>' +
+                '</td>' +
+                '</tr>';
+    });
+    html += '</tbody></table>';
+    return html;
+}
+</script>
+
+
+
 <script>
     $(function () {
         $('[data-bs-toggle="tooltip"]').tooltip();

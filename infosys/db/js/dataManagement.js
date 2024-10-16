@@ -308,10 +308,12 @@ $(document).on("click", ".deleteLeaderBtn", function (e) {
     });
   }
 });
+
 function populateIDModal(type, id) {
   // Reset the modal content
   document.getElementById("print_full_name").innerText = "";
   document.getElementById("print_uid").innerText = "";
+  document.getElementById("print_precinct").innerText = "";
   document.getElementById("print_barangay").innerText = "";
   document.getElementById("print_leader_photo").src = "";
   document.getElementById("print_qr_code").src = "";
@@ -336,6 +338,7 @@ function populateIDModal(type, id) {
         // Populate the modal with the fetched data
         document.getElementById("print_full_name").innerText = res.full_name;
         document.getElementById("print_uid").innerText = res.uid;
+        document.getElementById("print_precinct").innerText = res.precinct;
         document.getElementById("print_barangay").innerText = res.barangay;
 
         // Set leader/member photo
