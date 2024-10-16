@@ -239,21 +239,28 @@ $(document).on("click", ".viewLeaderBtn", function () {
   });
 });
 
-// Generate QR Code on button click
+// Generate QR Code for Leader on button click
 $(document).on("click", ".generateQRBtn", function () {
   var leader_id = $("#view_uid").text(); // Get the leader UID from the modal
   $.ajax({
     type: "GET",
-    url: "db/generateQRCode.php?leader_id=" + leader_id,
+    url: "db/generateQRCode.php", // Use the unified file
+    data: {
+      leader_id: leader_id, // Pass leader_id as the parameter
+    },
     success: function (response) {
       $("#view_leader_qr_code").attr(
         "src",
         "data:image/png;base64," + response
       );
     },
+    error: function (xhr, status, error) {
+      console.log("Error: " + error);
+    },
   });
 });
 
+// Generate QR Code for Member on button click
 $(document).on("click", ".generateMemberQRBtn", function () {
   var member_id = $(this).data("member-id"); // Get the member UIDM from the button
 
@@ -261,9 +268,9 @@ $(document).on("click", ".generateMemberQRBtn", function () {
 
   $.ajax({
     type: "GET",
-    url: "db/generateMemberQRCode.php",
+    url: "db/generateQRCode.php", // Use the unified file
     data: {
-      member_id: member_id,
+      member_id: member_id, // Pass member_id as the parameter
     },
     success: function (response) {
       console.log(response); // Log the response to check for any issues
@@ -301,53 +308,6 @@ $(document).on("click", ".deleteLeaderBtn", function (e) {
     });
   }
 });
-
-$(document).on("click", ".printIDBtn", function (e) {
-  e.preventDefault();
-  var leader_id = $(this).val(); // Get the leader ID from the button
-
-  // Make an AJAX request to get the leader data
-  $.ajax({
-    type: "POST",
-    url: "db/printModal.php",
-    data: {
-      fetch_leader: true,
-      leader_id: leader_id,
-    },
-    success: function (response) {
-      var res =
-        typeof response === "object" ? response : jQuery.parseJSON(response);
-      if (res.status == 500) {
-        alert(res.message);
-      } else {
-        // Populate modal fields with the fetched data
-        $("#print_leader_photo").attr("src", res.photo);
-        $("#print_uid").text(res.uid);
-        $("#print_full_name").text(res.full_name);
-        $("#print_barangay").text(res.barangay);
-
-        // Generate QR code from the leader's UID
-        $.ajax({
-          type: "GET",
-          url: "db/generateQRCode.php?leader_id=" + leader_id,
-          success: function (qrResponse) {
-            $("#print_qr_code").attr(
-              "src",
-              "data:image/png;base64," + qrResponse
-            );
-          },
-        });
-
-        // Show the modal
-        $("#printIDModal").modal("show");
-      }
-    },
-    error: function (jqXHR, textStatus, errorThrown) {
-      console.error("Error fetching data: ", textStatus, errorThrown);
-    },
-  });
-});
-
 function populateIDModal(type, id) {
   // Reset the modal content
   document.getElementById("print_full_name").innerText = "";
@@ -360,30 +320,31 @@ function populateIDModal(type, id) {
   let fetchUrl;
   if (type === "leader") {
     fetchUrl = `db/printModal.php?leader_id=${id}`;
+  } else if (type === "member") {
+    fetchUrl = `db/printModal.php?member_id=${id}`;
   }
 
-  // Fetch leader data and QR code via AJAX
+  // Fetch leader/member data and QR code via AJAX
   $.ajax({
     type: "GET",
     url: fetchUrl,
-    success: function (response) {
-      var res =
-        typeof response === "object" ? response : jQuery.parseJSON(response);
-      if (res.status == 500) {
+    dataType: "json", // Expect a JSON response
+    success: function (res) {
+      if (res.status === 500) {
         alert(res.message);
       } else {
-        // Populate the modal with the leader's data
+        // Populate the modal with the fetched data
         document.getElementById("print_full_name").innerText = res.full_name;
         document.getElementById("print_uid").innerText = res.uid;
         document.getElementById("print_barangay").innerText = res.barangay;
 
-        // Set leader photo
+        // Set leader/member photo
         document.getElementById("print_leader_photo").src = res.photo;
 
         // Fetch QR code and set it in the modal
         $.ajax({
           type: "GET",
-          url: `db/generateQRCode.php?leader_id=${id}`,
+          url: `db/generateQRCode.php?${type}_id=${id}`,
           success: function (qrResponse) {
             document.getElementById("print_qr_code").src =
               "data:image/png;base64," + qrResponse;
@@ -395,7 +356,8 @@ function populateIDModal(type, id) {
       }
     },
     error: function (jqXHR, textStatus, errorThrown) {
-      console.error("Error fetching leader data: ", textStatus, errorThrown);
+      alert("An error occurred while fetching data. Please try again later.");
+      console.error("Error fetching data: ", textStatus, errorThrown);
     },
   });
 }
