@@ -213,7 +213,7 @@
 
             <!-- Full Name, Barangay, and UID -->
             <div style="flex: 2; padding-left: 10px;">
-              <h3 id="print_full_name" style="margin: 0; font-size: 0.22in;"></h3>
+        <h3 id="print_full_name" style="margin: 0; font-size: 18px; white-space: normal; word-wrap: break-word; overflow: hidden;"></h3>
               <p id="print_barangay" style="font-size: 0.18in; margin: 3px 0;"></p>
               <p id="print_precinct" style="font-size: 0.15in; margin: 0;"></p>
               <input type="hidden" id="print_uid"/>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 04, 2024 at 06:57 AM
+-- Generation Time: Oct 21, 2024 at 05:38 AM
 -- Server version: 10.4.25-MariaDB
 -- PHP Version: 8.1.10
 
@@ -39,15 +39,8 @@ CREATE TABLE `leaders` (
   `civil_status` varchar(255) NOT NULL,
   `sex` varchar(255) NOT NULL,
   `leaders_photo` varchar(255) NOT NULL,
-  `UID` varchar(8) NOT NULL
+  `UID` varchar(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `leaders`
---
-
-INSERT INTO `leaders` (`id`, `barangay`, `contact_number`, `precint_no`, `full_name`, `birthdate`, `age`, `address`, `civil_status`, `sex`, `leaders_photo`, `UID`) VALUES
-(17, 'Bagbaguin', '0947-513-6907', '154E', 'Sofia Penaranda', '2024-07-31', 22, '121 Guijo St.', 'Single', 'Male', '1x1.png', 'UID0001');
 
 --
 -- Triggers `leaders`
@@ -57,10 +50,10 @@ CREATE TRIGGER `trg_generate_uid` BEFORE INSERT ON `leaders` FOR EACH ROW BEGIN
     DECLARE last_id INT;
 
     -- Get the last number in the UID sequence
-    SELECT IFNULL(MAX(CAST(SUBSTRING(UID, 4, 4) AS UNSIGNED)), 0) INTO last_id FROM leaders;
+    SELECT IFNULL(MAX(CAST(SUBSTRING(UID, 4) AS UNSIGNED)), 0) INTO last_id FROM leaders;
 
-    -- Set the new UID value
-    SET NEW.UID = CONCAT('UID', LPAD(last_id + 1, 4, '0'));
+    -- Set the new UID value, allowing for up to 6 digits (1 million)
+    SET NEW.UID = CONCAT('UID', LPAD(last_id + 1, 6, '0'));
 END
 $$
 DELIMITER ;
@@ -79,15 +72,8 @@ CREATE TABLE `members` (
   `member_precinct` varchar(255) NOT NULL,
   `member_photo` varchar(255) NOT NULL,
   `leader_id` int(11) NOT NULL,
-  `UIDM` varchar(9) NOT NULL
+  `UIDM` varchar(12) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `members`
---
-
-INSERT INTO `members` (`id`, `member_name`, `member_birthdate`, `member_contact`, `member_precinct`, `member_photo`, `leader_id`, `UIDM`) VALUES
-(111, 'Realino Peralta', '2024-08-01', '0947-513-6907', '154F', '', 17, 'UIDM0001');
 
 --
 -- Triggers `members`
@@ -96,11 +82,11 @@ DELIMITER $$
 CREATE TRIGGER `trg_generate_uid_members` BEFORE INSERT ON `members` FOR EACH ROW BEGIN
     DECLARE last_id INT;
 
-    -- Get the last number in the UIDM sequence for members
-    SELECT IFNULL(MAX(CAST(SUBSTRING(UIDM, 5, 4) AS UNSIGNED)), 0) INTO last_id FROM members;
+    -- Get the last number in the UIDM sequence
+    SELECT IFNULL(MAX(CAST(SUBSTRING(UIDM, 5) AS UNSIGNED)), 0) INTO last_id FROM members;
 
-    -- Set the new UID value for members
-    SET NEW.UIDM = CONCAT('UIDM', LPAD(last_id + 1, 4, '0'));
+    -- Set the new UIDM value, allowing for up to 6 digits (1 million)
+    SET NEW.UIDM = CONCAT('UIDM', LPAD(last_id + 1, 6, '0'));
 END
 $$
 DELIMITER ;
@@ -125,8 +111,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `email`, `role`, `token`) VALUES
-(1, 'admin', '$2y$10$tWfIYCXmJC33ipc4UEC0ROMWLg1tuuCblAu1R4W.6LF78CDT.t/fG', 'admin@admin.com', 'admin', 'e6ed23080cfe01c7033e32bef9435684079ac6209ba6aeeaf8cc8370a9fc4ca5'),
-(3, 'AUBREY', '$2y$10$FMXQiIsYjSzcoL72yg6.BOVQYAxv5Q0RChcofjLGSII97x5NRDAhC', 'Zafiroleonardo@gmail.com', 'user', '65f5cdb84b76941e5cf3a958ebf2922f6a64870709df8a17a73fc20ee2a64e5d');
+(1, 'admin', '$2y$10$tWfIYCXmJC33ipc4UEC0ROMWLg1tuuCblAu1R4W.6LF78CDT.t/fG', 'admin@admin.com', 'admin', '09ad6e83903b68009593014b160490653aeb673149e8ff779e6b08df1f88875b'),
+(3, 'AUBREY', '$2y$10$FMXQiIsYjSzcoL72yg6.BOVQYAxv5Q0RChcofjLGSII97x5NRDAhC', 'Zafiroleonardo@gmail.com', 'user', 'a50ef922243c58e6a680bfaac6c6fbaa9b214bbaba70efa53a8a909f502d2c66'),
+(4, 'ashley', '$2y$10$nAgUJ8JEpsRziaI7rouftuzQpoUr.yo5zgSlCcy6FX997UJvd4ZXO', 'ashdeleon88@gmail.com', 'user', 'afcdc0254d13acbc18312f84acf4976216e1de60ef3cfe05ccac5102e6cad5f2');
 
 --
 -- Indexes for dumped tables
@@ -162,19 +149,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `leaders`
 --
 ALTER TABLE `leaders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `members`
 --
 ALTER TABLE `members`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=112;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
