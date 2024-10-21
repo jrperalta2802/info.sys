@@ -118,10 +118,9 @@
             <?php
             require 'db/dbcon.php';
 
-            $query = "
-                SELECT m.UID, m.full_name, m.contact_number, m.precint_no, l.barangay, l.leaders_name 
-                FROM members m 
-                JOIN leaders l ON m.leader_id = l.UID
+            $query = "SELECT m.UIDM, m.member_name, m.member_contact, m.member_precinct, l.full_name, l.barangay
+                        FROM members m
+                        LEFT JOIN leaders l ON m.leader_id = l.id
             ";
             $query_run = mysqli_query($con, $query);
 
@@ -136,18 +135,17 @@
                         <td><?= htmlspecialchars($member['contact_number']) ?></td>
                         <td><?= htmlspecialchars($member['precinct_no']) ?></td>
                         <td>
-                        <td>
-                                            <div class="btn-group" role="group">
-                                                <button type="button" value="<?= $leader['id']; ?>" class="printIDBtn btn btn-primary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Print ID"><i class="fa-solid fa-print"></i></button>
-                                                <button type="button" value="<?= $leader['id']; ?>" class="viewLeaderBtn btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="View Leader">View</button>
-                                                <button type="button" value="<?= $leader['id']; ?>" class="editLeaderBtn btn btn-success btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Leader">Edit</button>
-                                                <button type="button" value="<?= $leader['id']; ?>" class="deleteLeaderBtn btn btn-danger btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Leader">Delete</button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <?php
+                            <div class="btn-group" role="group">
+                                <button type="button" value="<?= $member['UIDM']; ?>" class="printIDBtn btn btn-primary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Print ID"><i class="fa-solid fa-print"></i></button>
+                                <button type="button" value="<?= $member['UIDM']; ?>" class="viewLeaderBtn btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="View Leader">View</button>
+                                <button type="button" value="<?= $member['UIDM']; ?>" class="editLeaderBtn btn btn-success btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Leader">Edit</button>
+                                <button type="button" value="<?= $member['UIDM']; ?>" class="deleteLeaderBtn btn btn-danger btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Leader">Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                            <?php
+                                    }
                                 }
-                            }
                             ?>
                         </tbody>
                     </table>
