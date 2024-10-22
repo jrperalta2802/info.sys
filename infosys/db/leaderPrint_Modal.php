@@ -9,7 +9,7 @@
       <div class="modal-body p-3 d-flex justify-content-center">
         <!-- Leader ID Card Structure -->
         <div id="leader-id-card" 
-             style="background-image: url('db/uploads/BACKGROUNDCARESID_BG.jpg'); 
+             style="background-image: url('db/uploads/Leader_BG.jpg'); 
                     background-size: cover; 
                     color: black; 
                     padding: 10px; 
@@ -20,7 +20,7 @@
                     position: relative;">
           <!-- Logo and Header -->
           <div style="position: absolute; top: 15px; left: 12px; display: flex; align-items: center;">
-            <img src="db/uploads/logo.jpg" alt="Logo" style="width: 0.65in; height: auto; margin-right: 8px;">
+            <img src="db/uploads/logo.png" alt="Logo" style="width: 0.65in; height: auto; margin-right: 8px;">
             <h4 style="margin: 0; font-size: 0.16in;">Patuloy na Maglilingkod sa Inyo</h4>
           </div>
 
@@ -47,7 +47,8 @@
         </div>
       </div>
       <div class="modal-footer">
-        <p id="print_leader_timestamp"></p>
+        <p id="print_leader_timestamp" style="margin-right: auto; display: inline-block;"></p>
+
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         <button type="button" class="btn btn-primary" onclick="saveLeaderAsPDF()">Save as PDF</button>
         <button type="button" class="btn btn-success" onclick="printLeaderID()">Print</button>

@@ -9,7 +9,7 @@
       <div class="modal-body p-3 d-flex justify-content-center">
         <!-- Member ID Card Structure -->
         <div id="member-id-card" 
-             style="background-image: url('db/uploads/BACKGROUNDCARESID_BG.jpg'); 
+             style="background-image: url('db/uploads/Member_BG.jpg'); 
                     background-size: cover; 
                     color: black; 
                     padding: 10px; 
@@ -21,7 +21,7 @@
           
           <!-- Logo and Header -->
           <div style="position: absolute; top: 15px; left: 12px; display: flex; align-items: center;">
-            <img src="db/uploads/logo.jpg" alt="Logo" style="width: 0.65in; height: auto; margin-right: 8px;">
+            <img src="db/uploads/logo.png" alt="Logo" style="width: 0.65in; height: auto; margin-right: 8px;">
             <h4 style="margin: 0; font-size: 0.16in;">Patuloy na Maglilingkod sa Inyo</h4>
           </div>
 
@@ -29,7 +29,8 @@
           <div style="display: flex; align-items: center; margin-top: 70px;">
             <!-- Member's Photo -->
             <div style="flex: 1;">
-              <img id="print_member_photo" src="" alt="Member's Photo" style="width: 1in; height: 1in; border-radius: 3px; background-color: transparent;">
+              <input type="hidden" id="print_member_photo"/>
+              <img src="db/uploads/mem_placeholder.jpg" src="" alt="Member's Photo" style="width: 1in; height: 1in; border-radius: 3px; background-color: transparent;">
             </div>
 
             <!-- Full Name, Barangay, and Precinct -->
@@ -48,7 +49,7 @@
         </div>
       </div>
       <div class="modal-footer">
-       <p id="print_member_timestamp"></p>
+       <p id="print_member_timestamp" style="margin-right: auto; display: inline-block;"></p>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         <button type="button" class="btn btn-primary" onclick="saveMemberAsPDF()">Save as PDF</button>
         <button type="button" class="btn btn-success" onclick="printMemberID()">Print</button>
