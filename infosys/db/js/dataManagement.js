@@ -308,12 +308,37 @@ $(document).on("click", ".deleteLeaderBtn", function (e) {
 });
 
 function populateLeaderIDModal(id) {
-  // Reset the leader modal content
-  document.getElementById("print_leader_full_name").innerText = "";
-  document.getElementById("print_leader_barangay").innerText = "";
-  document.getElementById("print_leader_precinct").innerText = "";
-  document.getElementById("print_leader_photo").src = "";
-  document.getElementById("print_leader_qr_code").src = "";
+  var fullNameElem = document.getElementById("print_leader_full_name");
+  var precinctElem = document.getElementById("print_leader_precinct");
+  var photoElem = document.getElementById("print_leader_photo");
+  var qrCodeElem = document.getElementById("print_leader_qr_code");
+  var barangayElem = document.getElementById("print_leader_barangay");
+  var timestampElem = document.getElementById("print_leader_timestamp"); // Element to display the timestamp
+  var uidElem = document.getElementById("print_leader_uid"); // Hidden input for UID
+
+  if (
+    !fullNameElem ||
+    !precinctElem ||
+    !photoElem ||
+    !qrCodeElem ||
+    !barangayElem ||
+    !timestampElem ||
+    !uidElem
+  ) {
+    console.error(
+      "Modal elements not found. Check if modal is loaded correctly."
+    );
+    return;
+  }
+
+  // Reset the modal content
+  fullNameElem.innerText = "";
+  precinctElem.innerText = "";
+  barangayElem.innerText = "";
+  photoElem.src = "";
+  qrCodeElem.src = "";
+  timestampElem.innerText = ""; // Reset timestamp field
+  uidElem.value = ""; // Reset the hidden UID input
 
   // Fetch leader data via AJAX
   $.ajax({
@@ -325,21 +350,31 @@ function populateLeaderIDModal(id) {
         alert(res.message);
       } else {
         // Populate leader data
-        document.getElementById("print_leader_full_name").innerText =
-          res.full_name;
-        document.getElementById("print_leader_precinct").innerText =
-          res.precinct;
-        document.getElementById("print_leader_barangay").innerText =
-          res.barangay;
-        document.getElementById("print_leader_photo").src = res.photo;
+        fullNameElem.innerText = res.full_name;
+        precinctElem.innerText = res.precinct;
+        barangayElem.innerText = res.barangay;
+        photoElem.src = res.photo;
+
+        // Set the UID value to the hidden input field
+        uidElem.value = res.uid;
+
+        // Display the timestamp if available
+        if (res.printLeader_timestamp) {
+          timestampElem.innerText =
+            "Last printed: " + res.printLeader_timestamp;
+        } else {
+          timestampElem.innerText = "Not yet printed.";
+        }
 
         // Fetch and set leader QR code
         $.ajax({
           type: "GET",
           url: `db/generateQRCode.php?leader_id=${id}`,
           success: function (qrResponse) {
-            document.getElementById("print_leader_qr_code").src =
-              "data:image/png;base64," + qrResponse;
+            qrCodeElem.src = "data:image/png;base64," + qrResponse;
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            console.error("Error fetching QR code:", textStatus, errorThrown);
           },
         });
 
@@ -354,22 +389,43 @@ function populateLeaderIDModal(id) {
   });
 }
 
-function populateMemberIDModal(id) {
-  console.log("Fetching member ID:", id);
+// Function to handle updating the timestamp when printing or saving as PDF for leaders
+function updateLeaderTimestamp(id) {
+  $.ajax({
+    type: "POST",
+    url: "db/updateTimestamp.php", // Assuming this is your PHP file to update the timestamp
+    data: { uid: id, type: "leader" }, // Pass the leader ID and type as "leader"
+    success: function (response) {
+      console.log(response.message);
+      if (response.status === 200) {
+        // Optionally, you can update the timestamp displayed in the modal here
+        var timestampElem = document.getElementById("print_leader_timestamp");
+        timestampElem.innerText = "Printed on: " + new Date().toLocaleString();
+      }
+    },
+    error: function (jqXHR, textStatus, errorThrown) {
+      console.error("Error updating timestamp:", textStatus, errorThrown);
+    },
+  });
+}
 
-  // Check if the modal elements are available
+function populateMemberIDModal(id) {
   var fullNameElem = document.getElementById("print_member_full_name");
   var precinctElem = document.getElementById("print_member_precinct");
   var photoElem = document.getElementById("print_member_photo");
   var qrCodeElem = document.getElementById("print_member_qr_code");
-  var barangayElem = document.getElementById("print_member_barangay"); // Add this for barangay display
+  var barangayElem = document.getElementById("print_member_barangay");
+  var timestampElem = document.getElementById("print_member_timestamp"); // Element to display the timestamp
+  var uidElem = document.getElementById("print_member_uid"); // Hidden input for UID
 
   if (
     !fullNameElem ||
     !precinctElem ||
     !photoElem ||
     !qrCodeElem ||
-    !barangayElem
+    !barangayElem ||
+    !timestampElem ||
+    !uidElem
   ) {
     console.error(
       "Modal elements not found. Check if modal is loaded correctly."
@@ -377,12 +433,14 @@ function populateMemberIDModal(id) {
     return;
   }
 
-  // Reset the member modal content
+  // Reset the modal content
   fullNameElem.innerText = "";
   precinctElem.innerText = "";
-  barangayElem.innerText = ""; // Reset the barangay field
+  barangayElem.innerText = "";
   photoElem.src = "";
   qrCodeElem.src = "";
+  timestampElem.innerText = ""; // Reset timestamp field
+  uidElem.value = ""; // Reset the hidden UID input
 
   // Fetch member data via AJAX
   $.ajax({
@@ -390,23 +448,31 @@ function populateMemberIDModal(id) {
     url: `db/printDataHandler.php?member_id=${id}`,
     dataType: "json",
     success: function (res) {
-      console.log("Member data fetched:", res);
-
       if (res.status === 500) {
         alert(res.message);
       } else {
         // Populate member data
         fullNameElem.innerText = res.full_name;
         precinctElem.innerText = res.precinct;
-        barangayElem.innerText = res.barangay; // Display leader's barangay
+        barangayElem.innerText = res.barangay;
         photoElem.src = res.photo;
+
+        // Set the UID value to the hidden input field
+        uidElem.value = res.uid;
+
+        // Display the timestamp if available
+        if (res.printMember_timestamp) {
+          timestampElem.innerText =
+            "Last printed: " + res.printMember_timestamp;
+        } else {
+          timestampElem.innerText = "Not yet printed.";
+        }
 
         // Fetch and set member QR code
         $.ajax({
           type: "GET",
           url: `db/generateQRCode.php?member_id=${id}`,
           success: function (qrResponse) {
-            console.log("QR Code fetched:", qrResponse);
             qrCodeElem.src = "data:image/png;base64," + qrResponse;
           },
           error: function (jqXHR, textStatus, errorThrown) {
@@ -421,6 +487,43 @@ function populateMemberIDModal(id) {
     error: function (jqXHR, textStatus, errorThrown) {
       alert("An error occurred while fetching member data.");
       console.error("Error fetching member data:", textStatus, errorThrown);
+    },
+  });
+}
+
+// Function to handle updating the timestamp when printing or saving as PDF for members
+function updateMemberTimestamp(id) {
+  $.ajax({
+    type: "POST",
+    url: "db/updateTimestamp.php", // Assuming this is your PHP file to update the timestamp
+    data: { uid: id, type: "member" }, // Pass the member ID and type as "member"
+    success: function (response) {
+      console.log(response.message);
+      if (response.status === 200) {
+        // Optionally, you can update the timestamp displayed in the modal here
+        var timestampElem = document.getElementById("print_member_timestamp");
+        timestampElem.innerText = "Printed on: " + new Date().toLocaleString();
+      }
+    },
+    error: function (jqXHR, textStatus, errorThrown) {
+      console.error("Error updating timestamp:", textStatus, errorThrown);
+    },
+  });
+}
+
+function updateTimestamp(uid, type) {
+  $.ajax({
+    type: "POST",
+    url: "db/updateTimestamp.php", // Path to your timestamp update PHP script
+    data: {
+      uid: uid,
+      type: type,
+    },
+    success: function (response) {
+      console.log("Timestamp updated successfully:", response);
+    },
+    error: function (jqXHR, textStatus, errorThrown) {
+      console.error("Error updating timestamp:", textStatus, errorThrown);
     },
   });
 }

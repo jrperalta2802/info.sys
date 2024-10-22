@@ -47,6 +47,7 @@
         </div>
       </div>
       <div class="modal-footer">
+        <p id="print_leader_timestamp"></p>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         <button type="button" class="btn btn-primary" onclick="saveLeaderAsPDF()">Save as PDF</button>
         <button type="button" class="btn btn-success" onclick="printLeaderID()">Print</button>
@@ -59,38 +60,54 @@
 <script>
 function saveLeaderAsPDF() {
     var element = document.getElementById('leader-id-card');
-    var uid = document.getElementById('print_leader_uid').value; 
+    var uid = document.getElementById('print_leader_uid').value;
 
     html2canvas(element, {
-        scale: 4, 
+        scale: 4,
         useCORS: true,
         backgroundColor: null
     }).then(function(canvas) {
-        var imgData = canvas.toDataURL('image/jpeg', 1.0); 
+        var imgData = canvas.toDataURL('image/jpeg', 1.0);
 
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF({
-            orientation: 'landscape', 
-            unit: 'in', 
+            orientation: 'landscape',
+            unit: 'in',
             format: [3.375, 2.125]
         });
 
         pdf.addImage(imgData, 'JPEG', 0, 0, 3.375, 2.125);
         pdf.save(uid ? uid + '_leader.pdf' : 'Leader-ID-Card.pdf');
+
+        // Update the timestamp in the database
+        $.ajax({
+            type: "POST",
+            url: "db/updateTimestamp.php",
+            data: { uid: uid, type: 'leader' },
+            success: function(response) {
+                console.log(response.message);  // Should display "Timestamp updated successfully"
+            },
+            error: function(xhr, status, error) {
+                console.error("Error updating timestamp:", status, error);
+            }
+        });
     });
 }
 
 function printLeaderID() {
     var element = document.getElementById('leader-id-card');
+    var uid = document.getElementById('print_leader_uid').value;
+
     html2canvas(element, {
-        scale: 4, 
+        scale: 4,
         useCORS: true,
         backgroundColor: null
     }).then(function(canvas) {
         var imgData = canvas.toDataURL('image/jpeg', 1.0);
+
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF({
-            orientation: 'landscape', 
+            orientation: 'landscape',
             unit: 'in',
             format: [3.375, 2.125]
         });
@@ -99,6 +116,21 @@ function printLeaderID() {
         var pdfData = pdf.output('blob');
         var pdfUrl = URL.createObjectURL(pdfData);
         window.open(pdfUrl);
+
+        // Update the timestamp in the database
+        $.ajax({
+            type: "POST",
+            url: "db/updateTimestamp.php",
+            data: { uid: uid, type: 'leader' },
+            success: function(response) {
+                console.log(response.message);  // Should display "Timestamp updated successfully"
+            },
+            error: function(xhr, status, error) {
+                console.error("Error updating timestamp:", status, error);
+            }
+        });
     });
 }
+
+
 </script>
