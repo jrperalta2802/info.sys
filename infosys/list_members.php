@@ -3,12 +3,12 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <!-- Required meta tags -->
+   <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="includes/css/styles.css" rel="stylesheet" />
     <script src="includes/js/scripts.js"></script>
-    <!-- jQuery -->
+       <!-- jQuery -->
     <script src="includes/js/jquery-3.7.1.min.js"></script>
 
     <!-- Bootstrap JS -->
@@ -24,20 +24,16 @@
     <link rel="stylesheet" href="includes/css/alertify.min.css"/>
 
     <!-- DataTables CSS -->
-    <link rel="stylesheet" type="text/css" href="includes/css/jquery.dataTables.min.css"/>
+    <link rel="stylesheet"  href="includes/css/jquery.dataTables.min.css"/>
 
     <!-- DataTables JS -->
-    <script type="text/javascript" src="includes/js/jquery.dataTables.min.js"></script>
-
+    <script src="includes/js/jquery.dataTables.min.js"></script>
+   
     <!-- Font Awesome 4.7.0 -->
      <link rel="stylesheet" href="includes/css/font-awesome.min.css"/>
 
-     <!-- Font Awesome 6.7.0 JS -->
-     <script src="includes/js/font-awesome.all.js" crossorigin="anonymous"></script>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6.7.0 JS -->
+    <script src="includes/js/font-awesome.all.js" crossorigin="anonymous"></script>
 
     <title>Admin - List of Members</title>
     <style>
@@ -86,7 +82,6 @@
 </head>
 <body class="sb-nav-fixed">
 
-<?php include 'db/addPerson.php'; ?>
 <?php include 'db/viewPerson.php'; ?>
 <?php include 'includes/nav/admin_nav.php'; ?>
 
@@ -104,10 +99,10 @@
     <table id="myTable" class="table table-bordered table-striped">
         <thead>
             <tr>
-                <th>UID</th>
+                <th>UIDM</th>
                 <th>Barangay</th>
                 <th>Leader's Name</th>
-                <th>Member's Full Name</th>
+                <th>Member's Name</th>
                 <th>Contact Number</th>
                 <th>Precinct No.</th>
                 <th>Actions</th>
@@ -117,7 +112,7 @@
             <?php
             require 'db/dbcon.php';
 
-            $query = "SELECT m.UIDM, m.member_name, m.member_contact, m.member_precinct, l.full_name, l.barangay
+              $query = "SELECT m.UIDM, m.member_name, m.member_contact, m.member_precinct, l.full_name, l.barangay, m.leader_id
                         FROM members m
                         LEFT JOIN leaders l ON m.leader_id = l.id
             ";
@@ -127,18 +122,15 @@
                 foreach($query_run as $member) {
                     ?>
                     <tr>
-                        <td><?= htmlspecialchars($member['UID']) ?></td>
+                        <td><?= htmlspecialchars($member['UIDM']) ?></td>
                         <td><?= htmlspecialchars($member['barangay']) ?></td>
                         <td><?= htmlspecialchars($member['full_name']) ?></td>
                         <td><?= htmlspecialchars($member['member_name']) ?></td>
-                        <td><?= htmlspecialchars($member['contact_number']) ?></td>
-                        <td><?= htmlspecialchars($member['precinct_no']) ?></td>
+                        <td><?= htmlspecialchars($member['member_contact']) ?></td>
+                        <td><?= htmlspecialchars($member['member_precinct']) ?></td>
                         <td>
-                            <div class="btn-group" role="group">
-                                <button type="button" value="<?= $member['UIDM']; ?>" class="printIDBtn btn btn-primary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Print ID"><i class="fa-solid fa-print"></i></button>
-                                <button type="button" value="<?= $member['UIDM']; ?>" class="viewLeaderBtn btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="View Leader">View</button>
-                                <button type="button" value="<?= $member['UIDM']; ?>" class="editLeaderBtn btn btn-success btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Leader">Edit</button>
-                                <button type="button" value="<?= $member['UIDM']; ?>" class="deleteLeaderBtn btn btn-danger btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Leader">Delete</button>
+                                 <div class="btn-group" role="group">
+                                <button type="button" value="<?= $member['leader_id']; ?>" class="viewLeaderBtn btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="View Leader">View</button>
                             </div>
                         </td>
                     </tr>
@@ -158,7 +150,7 @@
 </div>
 </main>
 
-<?php include 'db/crud_script.php'; ?>
+<script src="db/js/dataManagement.js"></script>
 
 <script>
     $(document).ready(function() {

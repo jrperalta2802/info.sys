@@ -239,7 +239,6 @@ $(document).on("click", ".viewLeaderBtn", function () {
   });
 });
 
-// Generate QR Code for Leader on button click
 $(document).on("click", ".generateQRBtn", function () {
   var leader_id = $("#view_uid").text(); // Get the leader UID from the modal
   $.ajax({
@@ -260,7 +259,6 @@ $(document).on("click", ".generateQRBtn", function () {
   });
 });
 
-// Generate QR Code for Member on button click
 $(document).on("click", ".generateMemberQRBtn", function () {
   var member_id = $(this).data("member-id"); // Get the member UIDM from the button
 
@@ -356,52 +354,6 @@ function populateLeaderIDModal(id) {
   });
 }
 
-function populateLeaderIDModal(id) {
-  // Reset the leader modal content
-  document.getElementById("print_leader_full_name").innerText = "";
-  document.getElementById("print_leader_barangay").innerText = "";
-  document.getElementById("print_leader_precinct").innerText = "";
-  document.getElementById("print_leader_photo").src = "";
-  document.getElementById("print_leader_qr_code").src = "";
-
-  // Fetch leader data via AJAX
-  $.ajax({
-    type: "GET",
-    url: `db/printDataHandler.php?leader_id=${id}`,
-    dataType: "json",
-    success: function (res) {
-      if (res.status === 500) {
-        alert(res.message);
-      } else {
-        // Populate leader data
-        document.getElementById("print_leader_full_name").innerText =
-          res.full_name;
-        document.getElementById("print_leader_precinct").innerText =
-          res.precinct;
-        document.getElementById("print_leader_barangay").innerText =
-          res.barangay;
-        document.getElementById("print_leader_photo").src = res.photo;
-
-        // Fetch and set leader QR code
-        $.ajax({
-          type: "GET",
-          url: `db/generateQRCode.php?leader_id=${id}`,
-          success: function (qrResponse) {
-            document.getElementById("print_leader_qr_code").src =
-              "data:image/png;base64," + qrResponse;
-          },
-        });
-
-        // Show the modal
-        $("#leaderPrintIdModal").modal("show");
-      }
-    },
-    error: function (jqXHR, textStatus, errorThrown) {
-      alert("An error occurred while fetching leader data.");
-      console.error("Error fetching leader data:", textStatus, errorThrown);
-    },
-  });
-}
 function populateMemberIDModal(id) {
   console.log("Fetching member ID:", id);
 

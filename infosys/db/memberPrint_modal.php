@@ -35,8 +35,8 @@
             <!-- Full Name, Barangay, and Precinct -->
             <div style="flex: 2; padding-left: 10px;">
               <h3 id="print_member_full_name" style="margin: 0; font-size: 18px; white-space: normal; word-wrap: break-word; overflow: hidden;"></h3>
-              <p id="print_member_precinct" style="font-size: 0.18in; margin: 3px 0;"></p>
-              <p id="print_member_barangay" style="font-size: 0.15in; margin: 0;"></p> <!-- Add this line for barangay -->
+              <p id="print_member_barangay" style="font-size: 0.18in; margin: 3px 0;"></p>
+              <p id="print_member_precinct" style="font-size: 0.15in; margin: 0;"></p> <!-- Add this line for barangay -->
               <input type="hidden" id="print_member_uid"/>
             </div>
 

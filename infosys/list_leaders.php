@@ -181,13 +181,13 @@
 
 <?php include 'db/leaderPrint_Modal.php'; ?>
 <?php include 'db/memberPrint_modal.php'; ?>
-
 <script src="db/js/dataManagement.js"></script>
 <script>
+    
+//Fetch members for a leader when the expand button is clicked
 $(document).ready(function() {
     var table = $('#myTable').DataTable();
 
-    // Expandable row click event
     $('#myTable tbody').on('click', 'button.expandBtn', function () {
         var tr = $(this).closest('tr');
         var row = table.row(tr);
@@ -206,7 +206,7 @@ $(document).ready(function() {
                     if (result.status === 200) {
                         row.child(format(result.data.members)).show();
                         $(this).text('-'); 
-                        $('[data-bs-toggle="tooltip"]').tooltip(); // Reinitialize tooltips
+                        $('[data-bs-toggle="tooltip"]').tooltip(); 
                     } else {
                         row.child('<div>Error: ' + result.message + '</div>').show();
                     }
@@ -221,52 +221,9 @@ $(document).ready(function() {
 
     // Print Member ID button click event
     $('#myTable').on('click', '.print-member-btn', function(event) {
-        event.stopPropagation(); // Stop event from bubbling to prevent row expansion
-        var memberId = $(this).closest('tr').find('td:first').text(); // Assuming UIDM is in the first <td>
-        populateMemberIDModal(memberId); // Call the function to show the member modal
-    });
-});
-
-$(document).ready(function() {
-    var table = $('#myTable').DataTable();
-
-    // Expandable row click event
-    $('#myTable tbody').on('click', 'button.expandBtn', function () {
-        var tr = $(this).closest('tr');
-        var row = table.row(tr);
-
-        if (row.child.isShown()) {
-            row.child.hide();
-            $(this).text('+'); 
-        } else {        
-            var leaderId = $(this).data('leader-id');
-            console.log('Fetching members for Leader ID:', leaderId);
-            $.ajax({
-                url: 'db/fetch_members.php?leader_id=' + leaderId,
-                method: 'GET',
-                success: function(response) {
-                    var result = JSON.parse(response); 
-                    if (result.status === 200) {
-                        row.child(format(result.data.members)).show();
-                        $(this).text('-'); 
-                        $('[data-bs-toggle="tooltip"]').tooltip(); // Reinitialize tooltips
-                    } else {
-                        row.child('<div>Error: ' + result.message + '</div>').show();
-                    }
-                }.bind(this), 
-                error: function(jqXHR, textStatus, errorThrown) {
-                    console.error('Error fetching members:', textStatus, errorThrown);
-                    row.child('<div>Error fetching members</div>').show();
-                }
-            });
-        }
-    });
-
-    // Print Member ID button click event
-    $('#myTable').on('click', '.print-member-btn', function(event) {
-        event.stopPropagation(); // Stop event from bubbling to prevent row expansion
-        var memberId = $(this).closest('tr').find('td:first-child').text(); // Use first-child instead of first
-        populateMemberIDModal(memberId); // Call the function to show the member modal
+        event.stopPropagation(); 
+        var memberId = $(this).closest('tr').find('td:first-child').text(); 
+        populateMemberIDModal(memberId); 
     });
 });
 
@@ -292,8 +249,6 @@ function format(members) {
 }
 
 </script>
-
-
 
 <script>
     $(function () {
