@@ -87,7 +87,6 @@
 <body class="sb-nav-fixed">
 
 <?php include 'db/addPerson.php'; ?>
-<?php include 'db/editPerson.php'; ?>
 <?php include 'db/viewPerson.php'; ?>
 <?php include 'includes/nav/admin_nav.php'; ?>
 
@@ -140,8 +139,6 @@
                                             <div class="btn-group" role="group">
                                                 <button type="button" value="<?= $leader['id']; ?>" class="printIDBtn btn btn-primary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Print ID"><i class="fa-solid fa-print"></i></button>
                                                 <button type="button" value="<?= $leader['id']; ?>" class="viewLeaderBtn btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="View Leader">View</button>
-                                                <button type="button" value="<?= $leader['id']; ?>" class="editLeaderBtn btn btn-success btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Leader">Edit</button>
-                                                <button type="button" value="<?= $leader['id']; ?>" class="deleteLeaderBtn btn btn-danger btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Leader">Delete</button>
                                             </div>
                                         </td>
                                     </tr>

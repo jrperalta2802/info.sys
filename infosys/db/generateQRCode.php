@@ -25,7 +25,7 @@ if (isset($_GET['leader_id']) || isset($_GET['member_id'])) {
 
             // Data to encode in the QR code
             // $data = "ID : $UID\nName : $full_name\nPrecinct : $precint_no\nAddress : $barangay";
-            $data = "ID : $UID";
+            $data = "UID : $UID";
             // Generate QR code
             ob_start();
             QRcode::png($data, null, QR_ECLEVEL_L, 10);
@@ -68,7 +68,7 @@ if (isset($_GET['leader_id']) || isset($_GET['member_id'])) {
 
                 // Data to encode in the QR code
                 //$data = "Leader UID: $leaderUID\nMember UIDM: $memberUIDM\nName: $memberName\nPrecinct: $memberPrecinct\nBarangay: $leaderBarangay";
-                $data = " Leader UID: $leaderUID\n Member UIDM: $memberUIDM";
+                $data = " UIDM : $memberUIDM";
                 // Generate QR code
                 ob_start();
                 QRcode::png($data, null, QR_ECLEVEL_L, 10);

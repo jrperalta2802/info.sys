@@ -309,58 +309,166 @@ $(document).on("click", ".deleteLeaderBtn", function (e) {
   }
 });
 
-function populateIDModal(type, id) {
-  // Reset the modal content
-  document.getElementById("print_full_name").innerText = "";
-  document.getElementById("print_uid").innerText = "";
-  document.getElementById("print_precinct").innerText = "";
-  document.getElementById("print_barangay").innerText = "";
+function populateLeaderIDModal(id) {
+  // Reset the leader modal content
+  document.getElementById("print_leader_full_name").innerText = "";
+  document.getElementById("print_leader_barangay").innerText = "";
+  document.getElementById("print_leader_precinct").innerText = "";
   document.getElementById("print_leader_photo").src = "";
-  document.getElementById("print_qr_code").src = "";
+  document.getElementById("print_leader_qr_code").src = "";
 
-  // Determine if it's for a leader or member and set the fetch URL accordingly
-  let fetchUrl;
-  if (type === "leader") {
-    fetchUrl = `db/printModal.php?leader_id=${id}`;
-  } else if (type === "member") {
-    fetchUrl = `db/printModal.php?member_id=${id}`;
-  }
-
-  // Fetch leader/member data and QR code via AJAX
+  // Fetch leader data via AJAX
   $.ajax({
     type: "GET",
-    url: fetchUrl,
-    dataType: "json", // Expect a JSON response
+    url: `db/printDataHandler.php?leader_id=${id}`,
+    dataType: "json",
     success: function (res) {
       if (res.status === 500) {
         alert(res.message);
       } else {
-        // Populate the modal with the fetched data
-        document.getElementById("print_full_name").innerText = res.full_name;
-        document.getElementById("print_uid").innerText = res.uid;
-        document.getElementById("print_precinct").innerText = res.precinct;
-        document.getElementById("print_barangay").innerText = res.barangay;
-
-        // Set leader/member photo
+        // Populate leader data
+        document.getElementById("print_leader_full_name").innerText =
+          res.full_name;
+        document.getElementById("print_leader_precinct").innerText =
+          res.precinct;
+        document.getElementById("print_leader_barangay").innerText =
+          res.barangay;
         document.getElementById("print_leader_photo").src = res.photo;
 
-        // Fetch QR code and set it in the modal
+        // Fetch and set leader QR code
         $.ajax({
           type: "GET",
-          url: `db/generateQRCode.php?${type}_id=${id}`,
+          url: `db/generateQRCode.php?leader_id=${id}`,
           success: function (qrResponse) {
-            document.getElementById("print_qr_code").src =
+            document.getElementById("print_leader_qr_code").src =
               "data:image/png;base64," + qrResponse;
           },
         });
 
         // Show the modal
-        $("#printIdModal").modal("show");
+        $("#leaderPrintIdModal").modal("show");
       }
     },
     error: function (jqXHR, textStatus, errorThrown) {
-      alert("An error occurred while fetching data. Please try again later.");
-      console.error("Error fetching data: ", textStatus, errorThrown);
+      alert("An error occurred while fetching leader data.");
+      console.error("Error fetching leader data:", textStatus, errorThrown);
+    },
+  });
+}
+
+function populateLeaderIDModal(id) {
+  // Reset the leader modal content
+  document.getElementById("print_leader_full_name").innerText = "";
+  document.getElementById("print_leader_barangay").innerText = "";
+  document.getElementById("print_leader_precinct").innerText = "";
+  document.getElementById("print_leader_photo").src = "";
+  document.getElementById("print_leader_qr_code").src = "";
+
+  // Fetch leader data via AJAX
+  $.ajax({
+    type: "GET",
+    url: `db/printDataHandler.php?leader_id=${id}`,
+    dataType: "json",
+    success: function (res) {
+      if (res.status === 500) {
+        alert(res.message);
+      } else {
+        // Populate leader data
+        document.getElementById("print_leader_full_name").innerText =
+          res.full_name;
+        document.getElementById("print_leader_precinct").innerText =
+          res.precinct;
+        document.getElementById("print_leader_barangay").innerText =
+          res.barangay;
+        document.getElementById("print_leader_photo").src = res.photo;
+
+        // Fetch and set leader QR code
+        $.ajax({
+          type: "GET",
+          url: `db/generateQRCode.php?leader_id=${id}`,
+          success: function (qrResponse) {
+            document.getElementById("print_leader_qr_code").src =
+              "data:image/png;base64," + qrResponse;
+          },
+        });
+
+        // Show the modal
+        $("#leaderPrintIdModal").modal("show");
+      }
+    },
+    error: function (jqXHR, textStatus, errorThrown) {
+      alert("An error occurred while fetching leader data.");
+      console.error("Error fetching leader data:", textStatus, errorThrown);
+    },
+  });
+}
+function populateMemberIDModal(id) {
+  console.log("Fetching member ID:", id);
+
+  // Check if the modal elements are available
+  var fullNameElem = document.getElementById("print_member_full_name");
+  var precinctElem = document.getElementById("print_member_precinct");
+  var photoElem = document.getElementById("print_member_photo");
+  var qrCodeElem = document.getElementById("print_member_qr_code");
+  var barangayElem = document.getElementById("print_member_barangay"); // Add this for barangay display
+
+  if (
+    !fullNameElem ||
+    !precinctElem ||
+    !photoElem ||
+    !qrCodeElem ||
+    !barangayElem
+  ) {
+    console.error(
+      "Modal elements not found. Check if modal is loaded correctly."
+    );
+    return;
+  }
+
+  // Reset the member modal content
+  fullNameElem.innerText = "";
+  precinctElem.innerText = "";
+  barangayElem.innerText = ""; // Reset the barangay field
+  photoElem.src = "";
+  qrCodeElem.src = "";
+
+  // Fetch member data via AJAX
+  $.ajax({
+    type: "GET",
+    url: `db/printDataHandler.php?member_id=${id}`,
+    dataType: "json",
+    success: function (res) {
+      console.log("Member data fetched:", res);
+
+      if (res.status === 500) {
+        alert(res.message);
+      } else {
+        // Populate member data
+        fullNameElem.innerText = res.full_name;
+        precinctElem.innerText = res.precinct;
+        barangayElem.innerText = res.barangay; // Display leader's barangay
+        photoElem.src = res.photo;
+
+        // Fetch and set member QR code
+        $.ajax({
+          type: "GET",
+          url: `db/generateQRCode.php?member_id=${id}`,
+          success: function (qrResponse) {
+            console.log("QR Code fetched:", qrResponse);
+            qrCodeElem.src = "data:image/png;base64," + qrResponse;
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            console.error("Error fetching QR code:", textStatus, errorThrown);
+          },
+        });
+
+        // Show the modal
+        $("#memberPrintIdModal").modal("show");
+      }
+    },
+    error: function (jqXHR, textStatus, errorThrown) {
+      alert("An error occurred while fetching member data.");
+      console.error("Error fetching member data:", textStatus, errorThrown);
     },
   });
 }

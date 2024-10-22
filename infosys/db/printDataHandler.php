@@ -29,26 +29,29 @@ if (isset($_GET['leader_id'])) {
 } elseif (isset($_GET['member_id'])) {
     $member_id = $_GET['member_id'];
 
-    // Fetch member data from the database
-    $query = "SELECT UIDM, member_name, member_precinct, member_photo FROM members WHERE UIDM = ?";
-    $stmt = $con->prepare($query);
-    $stmt->bind_param("s", $member_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    // Fetch member data from the database with leader's barangay
+$query = "SELECT m.UIDM, m.member_name, m.member_precinct, m.member_photo, l.barangay 
+          FROM members m
+          JOIN leaders l ON m.leader_id = l.id
+          WHERE m.UIDM = ?";
+$stmt = $con->prepare($query);
+$stmt->bind_param("s", $member_id);
+$stmt->execute();
+$result = $stmt->get_result();
 
-    if ($member = $result->fetch_assoc()) {
-        // Return the member data as a JSON response
-        echo json_encode([
-            'status' => 200,
-            'uid' => $member['UIDM'], 
-            'precinct' => $member['member_precinct'],
-            'full_name' => $member['member_name'],
-            'barangay' => $member['member_precinct'], // This should be the leader barangay
-            'photo' => '/info.sys/infosys/db/uploads/members/' . $member['member_photo']
-        ]);
-    } else {
-        echo json_encode(['status' => 500, 'message' => 'Member not found']);
-    }
+if ($member = $result->fetch_assoc()) {
+    // Return the member data along with leader's barangay as a JSON response
+    echo json_encode([
+        'status' => 200,
+        'uid' => $member['UIDM'], 
+        'precinct' => $member['member_precinct'],
+        'full_name' => $member['member_name'],
+        'barangay' => $member['barangay'],  // Fetch leader's barangay
+        'photo' => '/info.sys/infosys/db/uploads/members/' . $member['member_photo']
+    ]);
+} else {
+    echo json_encode(['status' => 500, 'message' => 'Member not found']);
+}
 
     $stmt->close();
 }

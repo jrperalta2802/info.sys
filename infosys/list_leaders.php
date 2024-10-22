@@ -151,9 +151,10 @@
                         <td><?= $leader['precint_no'] ?></td>
                         <td>
                             <div class="btn-group" role="group">
-                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#printIdModal" onclick="populateIDModal('leader', '<?= htmlspecialchars($leader['UID'], ENT_QUOTES, 'UTF-8') ?>')">
+                               <button class="btn btn-primary" onclick="populateLeaderIDModal('<?= htmlspecialchars($leader['UID'], ENT_QUOTES, 'UTF-8') ?>')" data-bs-toggle="tooltip" title="Print Leader">
     <i class="fa-solid fa-print"></i>
 </button>
+
 
 </button>
                                 <button type="button" value="<?= $leader['id']; ?>" class="viewLeaderBtn btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="View Leader">View</button>
@@ -178,129 +179,15 @@
 </div>
 </main>
 
-<!-- Print ID Modal -->
-<div class="modal fade" id="printIdModal" tabindex="-1" aria-labelledby="printIdModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" style="max-width: none; width: 650px;">
-    <div class="modal-content" style="border: none; padding: 20px;">
-      <div class="modal-header">
-        <h5 class="modal-title" id="printIdModalLabel">ID Preview</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body p-3 d-flex justify-content-center">
-        <!-- ID Card Structure -->
-        <div id="id-card" 
-             style="background-image: url('db/uploads/BACKGROUNDCARESID_BG.jpg'); 
-                    background-size: cover; 
-                    color: black; 
-                    padding: 10px; 
-                    border-radius: 10px; 
-                    width: 3.375in; 
-                    height: 2.125in; 
-                    text-align: left; 
-                    position: relative;">
-          <!-- Logo and Header -->
-          <div style="position: absolute; top: 15px; left: 12px; display: flex; align-items: center;">
-            <img src="db/uploads/logo.jpg" alt="Logo" style="width: 0.65in; height: auto; margin-right: 8px;">
-            <h4 style="margin: 0; font-size: 0.16in;">Patuloy na Maglilingkod sa Inyo</h4>
-          </div>
-
-          <!-- Main Content -->
-          <div style="display: flex; align-items: center; margin-top: 70px;"> <!-- Moved content down -->
-            <!-- Leader's/Member's Photo -->
-            <div style="flex: 1;">
-              <img id="print_leader_photo" src="" alt="Leader's Photo" style="width: 1in; height: 1in; border-radius: 3px; background-color: transparent;">
-            </div>
-
-            <!-- Full Name, Barangay, and UID -->
-            <div style="flex: 2; padding-left: 10px;">
-        <h3 id="print_full_name" style="margin: 0; font-size: 18px; white-space: normal; word-wrap: break-word; overflow: hidden;"></h3>
-              <p id="print_barangay" style="font-size: 0.18in; margin: 3px 0;"></p>
-              <p id="print_precinct" style="font-size: 0.15in; margin: 0;"></p>
-              <input type="hidden" id="print_uid"/>
-            </div>
-
-            <!-- QR Code -->
-            <div style="flex: 1; text-align: right; position: absolute; bottom: 10px; right: 10px;">
-              <img id="print_qr_code" src="" alt="QR Code" style="width: 0.58in; height: 0.58in;">
-            </div>
-          </div>
-        </div>
-      </div>
-     <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-    <button type="button" class="btn btn-primary" onclick="saveAsPDF()">Save as PDF</button>
-    <button type="button" class="btn btn-success" onclick="printID()">Print</button>
-        </div>
-    </div>
-  </div>
-</div>
-
-
-<script>
-function saveAsPDF() {
-    var element = document.getElementById('id-card'); 
-    var uid = document.getElementById('print_uid').innerText; 
-
-   
-    html2canvas(element, {
-        scale: 4, 
-        useCORS: true, 
-        allowTaint: false,
-        backgroundColor: null, 
-        width: element.offsetWidth,
-        height: element.offsetHeight
-    }).then(function(canvas) {
-        var imgData = canvas.toDataURL('image/jpeg', 1.0); 
-
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF({
-            orientation: 'landscape', 
-            unit: 'in', 
-            format: [3.375, 2.125]
-        });
-
-        pdf.addImage(imgData, 'JPEG', 0, 0, 3.375, 2.125);
-
-        pdf.save(uid ? uid + '.pdf' : 'ID-Card.pdf');
-    });
-}
-
-function printID() {
-    var element = document.getElementById('id-card'); 
-    var uid = document.getElementById('print_uid').innerText; 
-
-    html2canvas(element, {
-        scale: 4, 
-        useCORS: true, 
-        allowTaint: false,
-        backgroundColor: null,
-        width: element.offsetWidth,
-        height: element.offsetHeight
-    }).then(function(canvas) {
-        var imgData = canvas.toDataURL('image/jpeg', 1.0); 
-
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF({
-            orientation: 'landscape', 
-            unit: 'in',
-            format: [3.375, 2.125] 
-        });
-
-        pdf.addImage(imgData, 'JPEG', 0, 0, 3.375, 2.125);
-
-        var pdfData = pdf.output('blob');
-        var pdfUrl = URL.createObjectURL(pdfData);
-        window.open(pdfUrl); 
-    });
-}
-</script>
+<?php include 'db/leaderPrint_Modal.php'; ?>
+<?php include 'db/memberPrint_modal.php'; ?>
 
 <script src="db/js/dataManagement.js"></script>
-
 <script>
 $(document).ready(function() {
     var table = $('#myTable').DataTable();
 
+    // Expandable row click event
     $('#myTable tbody').on('click', 'button.expandBtn', function () {
         var tr = $(this).closest('tr');
         var row = table.row(tr);
@@ -319,6 +206,7 @@ $(document).ready(function() {
                     if (result.status === 200) {
                         row.child(format(result.data.members)).show();
                         $(this).text('-'); 
+                        $('[data-bs-toggle="tooltip"]').tooltip(); // Reinitialize tooltips
                     } else {
                         row.child('<div>Error: ' + result.message + '</div>').show();
                     }
@@ -329,6 +217,56 @@ $(document).ready(function() {
                 }
             });
         }
+    });
+
+    // Print Member ID button click event
+    $('#myTable').on('click', '.print-member-btn', function(event) {
+        event.stopPropagation(); // Stop event from bubbling to prevent row expansion
+        var memberId = $(this).closest('tr').find('td:first').text(); // Assuming UIDM is in the first <td>
+        populateMemberIDModal(memberId); // Call the function to show the member modal
+    });
+});
+
+$(document).ready(function() {
+    var table = $('#myTable').DataTable();
+
+    // Expandable row click event
+    $('#myTable tbody').on('click', 'button.expandBtn', function () {
+        var tr = $(this).closest('tr');
+        var row = table.row(tr);
+
+        if (row.child.isShown()) {
+            row.child.hide();
+            $(this).text('+'); 
+        } else {        
+            var leaderId = $(this).data('leader-id');
+            console.log('Fetching members for Leader ID:', leaderId);
+            $.ajax({
+                url: 'db/fetch_members.php?leader_id=' + leaderId,
+                method: 'GET',
+                success: function(response) {
+                    var result = JSON.parse(response); 
+                    if (result.status === 200) {
+                        row.child(format(result.data.members)).show();
+                        $(this).text('-'); 
+                        $('[data-bs-toggle="tooltip"]').tooltip(); // Reinitialize tooltips
+                    } else {
+                        row.child('<div>Error: ' + result.message + '</div>').show();
+                    }
+                }.bind(this), 
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error('Error fetching members:', textStatus, errorThrown);
+                    row.child('<div>Error fetching members</div>').show();
+                }
+            });
+        }
+    });
+
+    // Print Member ID button click event
+    $('#myTable').on('click', '.print-member-btn', function(event) {
+        event.stopPropagation(); // Stop event from bubbling to prevent row expansion
+        var memberId = $(this).closest('tr').find('td:first-child').text(); // Use first-child instead of first
+        populateMemberIDModal(memberId); // Call the function to show the member modal
     });
 });
 
@@ -344,7 +282,7 @@ function format(members) {
                 '<td>' + member.member_precinct + '</td>' +
                 '<td>' +
                     '<div class="btn-group" role="group">' +
-                        '<button class="btn btn-primary btn-sm" onclick="populateIDModal(\'member\', \'' + member.UIDM + '\')" data-bs-toggle="tooltip" data-bs-placement="top" title="Print Member"><i class="fa-solid fa-print"></i></button>' +
+                         '<button class="btn btn-primary btn-sm print-member-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Print Member"><i class="fa-solid fa-print"></i></button>' +
                     '</div>' +
                 '</td>' +
                 '</tr>';
@@ -352,7 +290,10 @@ function format(members) {
     html += '</tbody></table>';
     return html;
 }
+
 </script>
+
+
 
 <script>
     $(function () {
