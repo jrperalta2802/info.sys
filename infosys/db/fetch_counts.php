@@ -8,7 +8,7 @@ $transactionCount = 0;
 
 $sql1 = "SELECT COUNT(*) as count FROM leaders";
 $sql2 = "SELECT COUNT(*) as count FROM members";
-$sql3 = "SELECT COUNT(*) as count FROM reports";
+$sql3 = "SELECT COUNT(*) as count FROM reports_help ";
 $sql4 = "SELECT COUNT(*) as count FROM users";
 
 $result1 = $con->query($sql1);
@@ -34,6 +34,8 @@ if ($result4->num_rows > 0) {
     $row = $result4->fetch_assoc();
     $usersCount = $row['count'];
 }
+
+$totalLeaderMemberCount = $leaderCount + $memberCount;
 
 $con->close();
 ?>

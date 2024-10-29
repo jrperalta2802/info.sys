@@ -151,9 +151,7 @@
                         <td><?= $leader['precint_no'] ?></td>
                         <td>
                             <div class="btn-group" role="group">
-                               <button class="btn btn-primary" onclick="populateLeaderIDModal('<?= htmlspecialchars($leader['UID'], ENT_QUOTES, 'UTF-8') ?>')" data-bs-toggle="tooltip" title="Print Leader">
-    <i class="fa-solid fa-print"></i>
-</button>
+                               <button class="btn btn-primary" onclick="populateLeaderIDModal('<?= htmlspecialchars($leader['UID'], ENT_QUOTES, 'UTF-8') ?>')" data-bs-toggle="tooltip" title="Print Leader">Print</button>
 
 
 </button>

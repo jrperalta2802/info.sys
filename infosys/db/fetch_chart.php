@@ -1,7 +1,7 @@
 <?php
 include 'dbcon.php';
 
-// Fetch leaders per barangay
+// Define the barangays
 $barangays = [
     'Bagbaguin', 'Bagong Barrio', 'Baka-bakahan', 'Bunsuran I', 'Bunsuran II', 'Bunsuran III',
     'Cacarong Bata', 'Cacarong Matanda', 'Cupang', 'Malibong Bata', 'Malibong Matanda', 'Manatal',
@@ -10,7 +10,7 @@ $barangays = [
 ];
 
 $leaderCounts = [];
-$voteCounts = [];
+$memberCounts = [];
 
 // Fetch counts for leaders per barangay
 foreach ($barangays as $barangay) {
@@ -24,15 +24,19 @@ foreach ($barangays as $barangay) {
     $stmt->close();
 }
 
-// Fetch counts for votes per barangay
+// Fetch counts for members per barangay using a JOIN between members and leaders
 foreach ($barangays as $barangay) {
-    $voteSql = "SELECT COUNT(*) as count FROM reports WHERE barangay = ?";
-    $stmt = $con->prepare($voteSql);
+    $memberSql = "
+        SELECT COUNT(m.UIDM) as count
+        FROM members m
+        LEFT JOIN leaders l ON m.leader_id = l.id
+        WHERE l.barangay = ?";
+    $stmt = $con->prepare($memberSql);
     $stmt->bind_param("s", $barangay);
     $stmt->execute();
-    $voteResult = $stmt->get_result();
-    $voteRow = $voteResult->fetch_assoc();
-    $voteCounts[] = $voteRow['count'];
+    $memberResult = $stmt->get_result();
+    $memberRow = $memberResult->fetch_assoc();
+    $memberCounts[] = $memberRow['count'];
     $stmt->close();
 }
 
@@ -41,8 +45,8 @@ $con->close();
 ?>
 
 <script>
-// Convert PHP arrays of barangays, leader counts, and vote counts to JavaScript
+// Convert PHP arrays of barangays, leader counts, and member counts to JavaScript
 const barangays = <?php echo json_encode($barangays); ?>;
 const leaderCounts = <?php echo json_encode($leaderCounts); ?>;
-const voteCounts = <?php echo json_encode($voteCounts); ?>;
+const memberCounts = <?php echo json_encode($memberCounts); ?>;
 </script>

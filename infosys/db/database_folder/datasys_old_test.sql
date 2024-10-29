@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 23, 2024 at 05:26 AM
+-- Generation Time: Oct 24, 2024 at 01:17 AM
 -- Server version: 10.4.25-MariaDB
 -- PHP Version: 8.1.10
 
@@ -48,7 +48,7 @@ CREATE TABLE `leaders` (
 --
 
 INSERT INTO `leaders` (`id`, `barangay`, `contact_number`, `precint_no`, `full_name`, `birthdate`, `age`, `address`, `civil_status`, `sex`, `leaders_photo`, `UID`, `printLeader_timestamp`) VALUES
-(1, 'Bagbaguin', '0912-345-6789', '123A', 'Juan Dela Cruz', '2024-10-01', 22, '123 St Dominic', 'Single', 'Male', '1x1.png', 'UID000001', '2024-10-22 19:03:25'),
+(1, 'Bagbaguin', '0912-345-6789', '123A', 'Juan Dela Cruz', '2024-10-01', 22, '123 St Dominic', 'Single', 'Male', '1x1.jpg', 'UID000001', '2024-10-23 11:19:21'),
 (2, 'Bagong Barrio', '0947-513-6907', '154E', 'Juan Jose Rojas', '2024-10-01', 22, '123 Grove St.', 'Single', 'Male', '1x1.png', 'UID000002', '2024-10-22 19:01:14');
 
 --
@@ -91,8 +91,8 @@ CREATE TABLE `members` (
 
 INSERT INTO `members` (`id`, `member_name`, `member_birthdate`, `member_contact`, `member_precinct`, `member_photo`, `leader_id`, `UIDM`, `printMember_timestamp`) VALUES
 (2, 'Sebastian Vidal', '2024-10-10', '0992-846-4911', '124B', '', 2, 'UIDM000002', '2024-10-22 19:01:06'),
-(3, 'Jane Smith', '2024-10-03', '0917-595-3521', '123B', '', 1, 'UIDM000003', NULL),
-(4, 'Realino Peraltaddasd', '2024-10-03', '0992-846-4911', '124B', '', 1, 'UIDM000004', '2024-10-22 19:06:23');
+(5, 'Jane Smith', '2024-10-03', '0917-595-3521', '123B', '', 1, 'UIDM000003', NULL),
+(6, 'Realino Peraltaddasd', '2024-10-03', '0992-846-4911', '124B', '', 1, 'UIDM000004', NULL);
 
 --
 -- Triggers `members`
@@ -109,6 +109,24 @@ CREATE TRIGGER `trg_generate_uid_members` BEFORE INSERT ON `members` FOR EACH RO
 END
 $$
 DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `reports_help`
+--
+
+CREATE TABLE `reports_help` (
+  `UID` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  `full_name` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  `birthday` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  `contact` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  `assistance` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  `date` date NOT NULL DEFAULT current_timestamp(),
+  `time` time NOT NULL DEFAULT current_timestamp(),
+  `comments` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  `barangay` varchar(30) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -130,7 +148,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `email`, `role`, `token`) VALUES
-(1, 'admin', '$2y$10$tWfIYCXmJC33ipc4UEC0ROMWLg1tuuCblAu1R4W.6LF78CDT.t/fG', 'admin@admin.com', 'admin', '1904380e625f55d5ddc8c5dcb3e3dc686e12485cff3a260b1be6b066d5d3dd1d'),
+(1, 'admin', '$2y$10$tWfIYCXmJC33ipc4UEC0ROMWLg1tuuCblAu1R4W.6LF78CDT.t/fG', 'admin@admin.com', 'admin', 'd4fcc07e83414d5d5e23f0f651319cfbd8b2d7715b09e7f706d4716b65db9ff4'),
 (3, 'AUBREY', '$2y$10$FMXQiIsYjSzcoL72yg6.BOVQYAxv5Q0RChcofjLGSII97x5NRDAhC', 'Zafiroleonardo@gmail.com', 'user', 'a50ef922243c58e6a680bfaac6c6fbaa9b214bbaba70efa53a8a909f502d2c66'),
 (4, 'ashley', '$2y$10$nAgUJ8JEpsRziaI7rouftuzQpoUr.yo5zgSlCcy6FX997UJvd4ZXO', 'ashdeleon88@gmail.com', 'user', 'afcdc0254d13acbc18312f84acf4976216e1de60ef3cfe05ccac5102e6cad5f2');
 
@@ -174,7 +192,7 @@ ALTER TABLE `leaders`
 -- AUTO_INCREMENT for table `members`
 --
 ALTER TABLE `members`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `users`

@@ -22,15 +22,15 @@ new Chart(ctxLeader, {
   }
 });
 
-// Barangay (vote) chart
+    // Member chart
 const ctxBarangay = document.getElementById('chart_barangay').getContext('2d');
 new Chart(ctxBarangay, {
   type: 'bar',
   data: {
     labels: barangays, // Use barangays as labels
     datasets: [{
-      label: '# of votes',
-      data: voteCounts, // Use the vote counts
+      label: '# of members',
+      data: memberCounts, // Use the member counts
       backgroundColor: 'rgba(255, 99, 132, 0.2)',
       borderColor: 'rgba(255, 99, 132, 1)',
       borderWidth: 1

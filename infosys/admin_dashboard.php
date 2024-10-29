@@ -106,7 +106,7 @@
                 <!--Reports Card-->
                 <div class="col-xl-3 col-md-6">
                     <div class="card bg-success text-white mb-4">
-                      <div class="card-body">Total Votes: <?php echo $reportsCount?></div>
+                      <div class="card-body">Total of Leaders and Members: <?php echo $totalLeaderMemberCount?></div>
                       <div
                         class="card-footer d-flex align-items-center justify-content-between"
                       >
@@ -140,7 +140,7 @@
                         <div class="card mb-4">
                           <div class="card-header">
                             <i class="fas fa-chart-bar me-1"></i>
-                                Number of leaders per barangay
+                                Number of Leaders per barangay
                               </div>
                           <div class="card-body">
                             <canvas id="chart_leader" width="100%" height="40"></canvas>
@@ -153,7 +153,7 @@
                 <div class="card mb-4">
                   <div class="card-header">
                     <i class="fas fa-chart-bar me-1"></i>
-                        Number of votes per barangay
+                        Number of Members per barangay
                       </div>
                   <div class="card-body">
                     <canvas id="chart_barangay" width="100%" height="40"></canvas>
