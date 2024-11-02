@@ -8,39 +8,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="includes/css/styles.css" rel="stylesheet" />
     <script src="includes/js/scripts.js"></script>
-       <!-- jQuery -->
+    <!-- jQuery -->
     <script src="includes/js/jquery-3.7.1.min.js"></script>
-
     <!-- Bootstrap JS -->
     <script src="includes/js/bootstrap.bundle.min.js"></script>
-
     <!-- AlertifyJS -->
     <script src="includes/js/alertify.min.js"></script>
-
     <!-- Bootstrap CSS -->
     <link href="includes/css/bootstrap.min.css" rel="stylesheet">
-
     <!-- AlertifyJS CSS -->
     <link rel="stylesheet" href="includes/css/alertify.min.css"/>
-
     <!-- DataTables CSS -->
     <link rel="stylesheet"  href="includes/css/jquery.dataTables.min.css"/>
-
     <!-- DataTables JS -->
     <script src="includes/js/jquery.dataTables.min.js"></script>
-   
     <!-- Font Awesome 4.7.0 -->
-     <link rel="stylesheet" href="includes/css/font-awesome.min.css"/>
-
+    <link rel="stylesheet" href="includes/css/font-awesome.min.css"/>
     <!-- Font Awesome 6.7.0 JS -->
     <script src="includes/js/font-awesome.all.js" crossorigin="anonymous"></script>
-
     <!-- HTML2Canvas-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script> 
-
     <!-- JSPDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -90,10 +79,8 @@
         .img-thumbnail {
             width: 150px;
             height: auto;
-            }
-                        
+        }
     </style>
-</head>
 </head>
 <body class="sb-nav-fixed">
 
@@ -104,131 +91,113 @@
 
 <div id="layoutSidenav_content">
   <main>
-          <div class="container-fluid px-4">
-         <div class="container mt-4">
-    <div class="row">
-        <div class="col-md-12">
+    <div class="container-fluid px-4">
+      <div class="container mt-4">
+        <div class="row">
+          <div class="col-md-12">
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4>List of Leaders</h4>
-                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#leaderAddModal">
-                        Add <i class="fa fa-plus-square"></i> 
-                    </button>
-                </div>
-                <div class="card-body">
-                     <table id="myTable" class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th></th> <!-- Column for the expandable button -->
-                <th>UID</th>
-                <th>Barangay</th>
-                <th>Full Name</th>
-                <th>Contact Number</th>
-                <th>Precinct No.</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            require 'db/dbcon.php';
-
-            $query = "SELECT * FROM leaders";
-            $query_run = mysqli_query($con, $query);
-
-            if(mysqli_num_rows($query_run) > 0) {
-                foreach($query_run as $leader) {
-                    ?>
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <h4>List of Leaders</h4>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#leaderAddModal">
+                  Add <i class="fa fa-plus-square"></i> 
+                </button>
+              </div>
+              <div class="card-body">
+                <table id="myTable" class="table table-bordered table-striped">
+                  <thead>
                     <tr>
-                        <td>
-                            <button class="btn btn-sm btn-primary expandBtn" data-leader-id="<?= $leader['id'] ?>">
-                                +
-                            </button>
-                        </td>
-                        <td><?= $leader['UID'] ?></td>
-                        <td><?= $leader['barangay'] ?></td>
-                        <td><?= $leader['full_name'] ?></td>
-                        <td><?= $leader['contact_number'] ?></td>
-                        <td><?= $leader['precint_no'] ?></td>
-                        <td>
-                            <div class="btn-group" role="group">
-                               <button class="btn btn-primary" onclick="populateLeaderIDModal('<?= htmlspecialchars($leader['UID'], ENT_QUOTES, 'UTF-8') ?>')" data-bs-toggle="tooltip" title="Print Leader">Print</button>
-
-
-</button>
-                                <button type="button" value="<?= $leader['id']; ?>" class="viewLeaderBtn btn btn-info btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="View Leader">View</button>
-                                <button type="button" value="<?= $leader['id']; ?>" class="editLeaderBtn btn btn-success btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Leader">Edit</button>
-                                <button type="button" value="<?= $leader['id']; ?>" class="deleteLeaderBtn btn btn-danger btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Leader">Delete</button>
-                            </div>
-                        </td>
+                      <th></th> <!-- Column for the expandable button -->
+                      <th>UID</th>
+                      <th>Barangay</th>
+                      <th>Full Name</th>
+                      <th>Contact Number</th>
+                      <th>Precinct No.</th>
+                      <th>Actions</th>
                     </tr>
-                    <?php
-                }
-            }
-            ?>
-        </tbody>
-    </table>
-                </div>
+                  </thead>
+                  <tbody>
+                    <!-- Rows will be loaded via AJAX for server-side processing -->
+                  </tbody>
+                </table>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
+      <?php include 'includes/footer.php'; ?>
     </div>
+  </main>
 </div>
-</div>
-<?php include 'includes/footer.php'; ?>
-</div>
-</main>
+
 
 <?php include 'db/leaderPrint_Modal.php'; ?>
 <?php include 'db/memberPrint_modal.php'; ?>
 <script src="db/js/dataManagement.js"></script>
 <script>
-    
-//Fetch members for a leader when the expand button is clicked
-$(document).ready(function() {
-    var table = $('#myTable').DataTable();
-
-    $('#myTable tbody').on('click', 'button.expandBtn', function () {
-        var tr = $(this).closest('tr');
-        var row = table.row(tr);
-
-        if (row.child.isShown()) {
-            row.child.hide();
-            $(this).text('+'); 
-        } else {        
-            var leaderId = $(this).data('leader-id');
-            console.log('Fetching members for Leader ID:', leaderId);
-            $.ajax({
-                url: 'db/fetch_members.php?leader_id=' + leaderId,
-                method: 'GET',
-                success: function(response) {
-                    var result = JSON.parse(response); 
-                    if (result.status === 200) {
-                        row.child(format(result.data.members)).show();
-                        $(this).text('-'); 
-                        $('[data-bs-toggle="tooltip"]').tooltip(); 
-                    } else {
-                        row.child('<div>Error: ' + result.message + '</div>').show();
-                    }
-                }.bind(this), 
-                error: function(jqXHR, textStatus, errorThrown) {
-                    console.error('Error fetching members:', textStatus, errorThrown);
-                    row.child('<div>Error fetching members</div>').show();
-                }
-            });
+  $(document).ready(function() {
+    // Initialize DataTable with server-side processing
+    var table = $('#myTable').DataTable({
+      "serverSide": true,
+      "processing": true,
+      "ajax": {
+        "url": "db/server_processing.php", // Server-side script to handle data fetching
+        "type": "POST"
+      },
+      "columns": [
+        { "data": null, "defaultContent": "<button class='btn btn-sm btn-primary expandBtn'>+</button>" },
+        { "data": "UID" },
+        { "data": "barangay" },
+        { "data": "full_name" },
+        { "data": "contact_number" },
+        { "data": "precint_no" },
+        { "data": "UID", "render": function(data, type, row) {
+            return `
+             <div class="btn-group" role="group">
+                <button class="btn btn-primary btn-sm" onclick="populateLeaderIDModal('${data}')" data-bs-toggle="tooltip" title="Print Leader">Print</button>
+                <button type="button" value="${row.id}" class="viewLeaderBtn btn btn-info btn-sm" data-bs-toggle="tooltip" title="View Leader">View</button>
+                <button type="button" value="${row.id}" class="editLeaderBtn btn btn-success btn-sm" data-bs-toggle="tooltip" title="Edit Leader">Edit</button>
+                <button type="button" value="${row.id}" class="deleteLeaderBtn btn btn-danger btn-sm" data-bs-toggle="tooltip" title="Delete Leader">Delete</button>
+              </div>
+            `;
+          }
         }
+      ]
     });
 
-    // Print Member ID button click event
-    $('#myTable').on('click', '.print-member-btn', function(event) {
-        event.stopPropagation(); 
-        var memberId = $(this).closest('tr').find('td:first-child').text(); 
-        populateMemberIDModal(memberId); 
-    });
-});
+    // Expand button click event to show members for a leader
+    $('#myTable tbody').on('click', 'button.expandBtn', function () {
+      var tr = $(this).closest('tr');
+      var row = table.row(tr);
 
-// Function to format members for display
+      if (row.child.isShown()) {
+        row.child.hide();
+        $(this).text('+');
+      } else {
+        var leaderId = row.data().id;
+        $.ajax({
+          url: 'db/fetch_members.php?leader_id=' + leaderId,
+          method: 'GET',
+          success: function(response) {
+            var result = JSON.parse(response);
+            if (result.status === 200) {
+              row.child(format(result.data.members)).show();
+              $(this).text('-');
+              $('[data-bs-toggle="tooltip"]').tooltip();
+            } else {
+              row.child('<div>Error: ' + result.message + '</div>').show();
+            }
+          }.bind(this),
+          error: function(jqXHR, textStatus, errorThrown) {
+            console.error('Error fetching members:', textStatus, errorThrown);
+            row.child('<div>Error fetching members</div>').show();
+          }
+        });
+      }
+    });
+    
+// Function to format members for display in expanded rows
 function format(members) {
     var html = '<h5>Members</h5><table class="table table-bordered table-striped"><thead><tr><th>UIDM</th><th>Full Name</th><th>Contact Number</th><th>Precinct</th><th>Actions</th></tr></thead><tbody>';
-    
     $.each(members, function(index, member) {
         html += '<tr>' +
                 '<td>' + member.UIDM + '</td>' +
@@ -237,7 +206,7 @@ function format(members) {
                 '<td>' + member.member_precinct + '</td>' +
                 '<td>' +
                     '<div class="btn-group" role="group">' +
-                         '<button class="btn btn-primary btn-sm print-member-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Print Member"><i class="fa-solid fa-print"></i></button>' +
+                         `<button class="btn btn-primary btn-sm print-member-btn" onclick="populateMemberIDModal('${member.UIDM}')" data-bs-toggle="tooltip" title="Print Member">Print</button>` +
                     '</div>' +
                 '</td>' +
                 '</tr>';
@@ -245,18 +214,19 @@ function format(members) {
     html += '</tbody></table>';
     return html;
 }
-
+  });
 </script>
 
-<script>
-    $(function () {
-        $('[data-bs-toggle="tooltip"]').tooltip();
-    });
 
+<script>
+  $(function () {
+    $('[data-bs-toggle="tooltip"]').tooltip();
+  });
+
+  window.history.pushState(null, '', window.location.href);
+  window.onpopstate = function() {
     window.history.pushState(null, '', window.location.href);
-    window.onpopstate = function() {
-        window.history.pushState(null, '', window.location.href);
-    };
+  };
 </script>
 
 </body>
