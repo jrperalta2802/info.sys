@@ -172,6 +172,7 @@ $(document).on("click", ".viewLeaderBtn", function () {
       if (res.status == 404) {
         alert(res.message);
       } else if (res.status == 200) {
+        // Populate leader details
         $("#view_leader_photo").attr(
           "src",
           "/info.sys/infosys/db/uploads/leaders/" +
@@ -188,49 +189,68 @@ $(document).on("click", ".viewLeaderBtn", function () {
         $("#view_sex").text(res.data.leader.sex);
         $("#view_uid").text(res.data.leader.UID); // Display leader UID
 
-        // Populate members table
-        var membersTableBody = $("#membersTableBody");
-        membersTableBody.empty(); // Clear existing rows
+        // Populate Reports for Assistance table
+        var reportsTableBody = $("#reportsTableBody");
+        reportsTableBody.empty(); // Clear existing rows
 
-        res.data.members.forEach(function (member) {
-          var row =
-            "<tr>" +
-            '<td><img src="/info.sys/infosys/db/uploads/members/' +
-            member.member_photo +
-            '" alt="" class="img-fluid rounded" style="max-width: 50px;"></td>' +
-            "<td>" +
-            member.UIDM +
-            "</td>" + // Display member UID
-            "<td>" +
-            member.member_name +
-            "</td>" +
-            "<td>" +
-            member.member_birthdate +
-            "</td>" +
-            "<td>" +
-            member.member_contact +
-            "</td>" +
-            "<td>" +
-            member.member_precinct +
-            "</td>" +
-            '<td><button type="button" class="btn btn-success popover-btn generateMemberQRBtn" data-container="body" data-toggle="popover" data-member-id="' +
-            member.UIDM +
-            '"><i class="fa fa-qrcode"></i></button></td>' +
-            "</tr>";
-          membersTableBody.append(row);
-        });
-        //QR Code
-        $(document).ready(function () {
-          $('[data-toggle="popover"]').popover({
-            placement: "right",
-            trigger: "click",
-            html: true,
-            content:
-              '<div class="media"><img id="view_qr_code" src="" alt="" class="img-thumbnail rounded"></div>',
+        if (res.data.reports_help.length === 0) {
+          // Add placeholder row if no data is available
+          var placeholderRow = `
+        <tr>
+            <td colspan="5" class="text-center text-dark fw-bold">No data available in table</td>
+        </tr>`;
+          reportsTableBody.append(placeholderRow);
+        } else {
+          res.data.reports_help.forEach(function (report) {
+            var row =
+              "<tr>" +
+              "<td>" +
+              report.date +
+              "</td>" +
+              "<td>" +
+              report.time +
+              "</td>" +
+              "<td>" +
+              report.assistance +
+              "</td>" +
+              "<td>" +
+              report.comments +
+              "</td>" +
+              "<td>" +
+              '<button type="button" class="btn btn-danger btn-sm delete-report-btn" data-container="body" data-report-id="' +
+              report.id +
+              '"><i class="fa fa-trash" ></i></button></td>' +
+              "</tr>";
+            reportsTableBody.append(row);
           });
-        });
-        // Clear the previous QR code
-        $("#view_leader_qr_code").attr("src", "");
+        }
+
+        // Populate Reports for Vote table
+        var votesTableBody = $("#votesTableBody");
+        votesTableBody.empty(); // Clear existing rows
+
+        if (res.data.votes.length === 0) {
+          // Add placeholder row if no data is available
+          var placeholderRow = `
+          <tr>
+              <td colspan="5" class="text-center text-dark fw-bold">No data available in table</td>
+          </tr>`;
+          votesTableBody.append(placeholderRow);
+        } else {
+          res.data.votes.forEach(function (vote) {
+            var row = `
+              <tr>
+                <td>${vote.date}</td>
+                <td>${vote.time_in}</td>
+                <td>${vote.time_out}</td>
+                <td>${vote.barangay}</td>
+                <td>
+                  <button type="button" class="btn btn-danger btn-sm viewLeaderBtn" value="${vote.id}"><i class="fa fa-trash" ></i></button>
+                </td>
+              </tr>`;
+            votesTableBody.append(row);
+          });
+        }
 
         // Show the modal
         $("#leaderViewModal").modal("show");
@@ -527,3 +547,112 @@ function updateTimestamp(uid, type) {
     },
   });
 }
+$(document).on("click", ".view-member-btn", function () {
+  var memberUIDM = $(this).closest("tr").find("td:first").text();
+
+  console.log("Fetching details for UIDM:", memberUIDM);
+
+  $.ajax({
+    type: "GET",
+    url: "db/personProcess.php?UIDM=" + memberUIDM,
+    success: function (response) {
+      console.log("Response:", response);
+      var res =
+        typeof response === "object" ? response : jQuery.parseJSON(response);
+
+      if (res.status === 404) {
+        alert(res.message);
+      } else if (res.status === 200) {
+        console.log("Populating modal fields...");
+
+        // Test multiple methods for updating the DOM
+        let contactField = document.getElementById(
+          "members_view_contact_number"
+        );
+
+        console.log(
+          "Before update - native textContent:",
+          contactField.textContent
+        );
+        contactField.textContent = res.data.member.contact || "N/A"; // Native update
+        console.log(
+          "After update - native textContent:",
+          contactField.textContent
+        );
+
+        // Update the modal fields
+        $("#members_view_uid").text(res.data.member.UIDM || "N/A");
+        $("#members_view_full_name").text(res.data.member.full_name || "N/A");
+        $("#members_view_contact_number").text(
+          res.data.member.contact || "N/A"
+        );
+        $("#members_view_birthdate").text(res.data.member.birthdate || "N/A");
+        $("#members_view_precint_no").text(res.data.member.precinct || "N/A");
+
+        // Delay modal display to ensure updates
+        setTimeout(() => {
+          $("#memberViewModal").modal("show");
+        }, 100);
+
+        // Populate Reports for Assistance table
+        var reportsTableBody = $("#members_reportsTableBody");
+        reportsTableBody.empty(); // Clear existing rows
+
+        if (res.data.reports_help.length === 0) {
+          reportsTableBody.append(`
+            <tr>
+              <td colspan="5" class="text-center text-muted">No Reports Available</td>
+            </tr>
+          `);
+        } else {
+          res.data.reports_help.forEach(function (report) {
+            var row = `
+              <tr>
+                <td>${report.date}</td>
+                <td>${report.time}</td>
+                <td>${report.assistance}</td>
+                <td>${report.comments}</td>
+                <td>
+                  <button type="button" class="btn btn-danger btn-sm delete-report-btn" data-report-id="${report.id}"><i class="fa fa-trash" ></i></button>
+                </td>
+              </tr>`;
+            reportsTableBody.append(row);
+          });
+        }
+
+        // Populate Reports for Vote table
+        var votesTableBody = $("#members_votesTableBody");
+        votesTableBody.empty(); // Clear existing rows
+
+        if (res.data.votes.length === 0) {
+          votesTableBody.append(`
+            <tr>
+              <td colspan="5" class="text-center text-muted">No Reports Available</td>
+            </tr>
+          `);
+        } else {
+          res.data.votes.forEach(function (vote) {
+            var row = `
+              <tr>
+                <td>${vote.date}</td>
+                <td>${vote.time_in}</td>
+                <td>${vote.time_out}</td>
+                <td>${vote.barangay}</td>
+                <td>
+                  <button type="button" class="btn btn-danger btn-sm" data-report-id="${vote.id}"><i class="fa fa-trash" ></i></button>
+                </td>
+              </tr>`;
+            votesTableBody.append(row);
+          });
+        }
+
+        // Ensure the modal is displayed
+        $("#memberViewModal").modal("show");
+      }
+    },
+    error: function (xhr, status, error) {
+      console.error("XHR Error:", xhr);
+      alert("Failed to fetch member details. Please try again.");
+    },
+  });
+});

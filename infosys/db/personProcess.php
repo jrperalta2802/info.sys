@@ -7,6 +7,55 @@ require 'dbcon.php';
 
 ob_start();
 header('Content-Type: application/json');
+
+// Fetch a member's details by UIDM
+if (isset($_GET['UIDM'])) {
+    $UIDM = $_GET['UIDM'];
+
+    // Fetch member details
+    $member_query = "
+        SELECT 
+            UIDM, 
+            member_name AS full_name,                    
+            member_birthdate AS birthdate, 
+            member_contact AS contact, 
+            member_precinct AS precinct 
+        FROM members 
+        WHERE UIDM = '$UIDM'";
+    $member_result = mysqli_query($con, $member_query);
+
+    if (mysqli_num_rows($member_result) == 1) {
+        $member = mysqli_fetch_assoc($member_result);
+
+        // Fetch reports for assistance
+        $reports_query = "SELECT * FROM reports_help WHERE UID = '$UIDM'";
+        $reports_result = mysqli_query($con, $reports_query);
+        $reports = mysqli_fetch_all($reports_result, MYSQLI_ASSOC);
+
+        // Fetch reports for vote
+        $votes_query = "SELECT * FROM reports WHERE UID = '$UIDM'";
+        $votes_result = mysqli_query($con, $votes_query);
+        $votes = mysqli_fetch_all($votes_result, MYSQLI_ASSOC);
+
+        // Send JSON response with updated key names to match frontend
+        echo json_encode([
+            'status' => 200,
+            'data' => [
+                'member' => $member, // Matches updated frontend field references
+                'reports_help' => $reports, // Matches updated frontend table
+                'votes' => $votes // Matches updated frontend table
+            ]
+        ]);
+    } else {
+        echo json_encode(['status' => 404, 'message' => 'Member not found']);
+    }
+    exit();
+}
+
+
+// The rest of the existing functionalities remain unchanged
+// Ensure all other features like save, update, delete leaders work as expected
+
 if (isset($_POST['save_leader'])) {
     $barangay = mysqli_real_escape_string($con, $_POST['barangay']);
     $full_name = mysqli_real_escape_string($con, $_POST['full_name']);
@@ -120,8 +169,6 @@ $stmt->execute();
     }
     $stmt->close();
 }
-
-
 
 if (isset($_POST['update_leader'])) {
     $leader_id = mysqli_real_escape_string($con, $_POST['leader_id']);
@@ -252,7 +299,19 @@ if (isset($_GET['leader_id'])) {
 
     if (mysqli_num_rows($leader_result) == 1) {
         $leader = mysqli_fetch_assoc($leader_result);
+        $leader_uid = $leader['UID'];
 
+        // Fetch reports from reports_help table
+        $reports_query = "SELECT * FROM reports_help WHERE UID = '$leader_uid'";
+        $reports_result = mysqli_query($con, $reports_query);
+        $reports = mysqli_fetch_all($reports_result, MYSQLI_ASSOC);
+
+        // Fetch votes from reports table
+        $votes_query = "SELECT * FROM reports WHERE UID = '$leader_uid'";
+        $votes_result = mysqli_query($con, $votes_query);
+        $votes = mysqli_fetch_all($votes_result, MYSQLI_ASSOC);
+
+        // Fetch members
         $members_query = "SELECT * FROM members WHERE leader_id = '$leader_id'";
         $members_result = mysqli_query($con, $members_query);
         $members = mysqli_fetch_all($members_result, MYSQLI_ASSOC);
@@ -261,13 +320,16 @@ if (isset($_GET['leader_id'])) {
             'status' => 200,
             'data' => [
                 'leader' => $leader,
-                'members' => $members
+                'members' => $members,
+                'reports_help' => $reports,
+                'votes' => $votes
             ]
         ]);
     } else {
         echo json_encode(['status' => 404, 'message' => 'Leader not found']);
     }
 }
+
 if (isset($_POST['delete_leader'])) {
     $leader_id = mysqli_real_escape_string($con, $_POST['leader_id']);
 

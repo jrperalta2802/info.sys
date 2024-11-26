@@ -86,8 +86,9 @@
 
 <?php include 'db/addPerson.php'; ?>
 <?php include 'db/editPerson.php'; ?>
-<?php include 'db/viewPerson.php'; ?>
+<?php include 'db/viewPerson_leaders.php'; ?>
 <?php include 'includes/nav/admin_nav.php'; ?>
+<?php include 'db/viewPerson_members.php'; ?>
 
 <div id="layoutSidenav_content">
   <main>
@@ -207,6 +208,7 @@ function format(members) {
                 '<td>' +
                     '<div class="btn-group" role="group">' +
                          `<button class="btn btn-primary btn-sm print-member-btn" onclick="populateMemberIDModal('${member.UIDM}')" data-bs-toggle="tooltip" title="Print Member">Print</button>` +
+                        `<button class="btn btn-info btn-sm view-member-btn" data-bs-toggle="tooltip" title="View Member">View</button>` //View Button for Member
                     '</div>' +
                 '</td>' +
                 '</tr>';

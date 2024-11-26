@@ -72,7 +72,7 @@
 </head>
 <body class="sb-nav-fixed">
 
-<?php include 'db/viewPerson.php'; ?>
+<?php include 'db/viewPerson_members.php'; ?>
 <?php include 'includes/nav/admin_nav.php'; ?>
 
 <div id="layoutSidenav_content">
@@ -130,7 +130,7 @@
                 { "data": "leader_id", "render": function(data, type, row) {
                         return `
                           <div class="btn-group" role="group">
-                            <button type="button" value="${data}" class="viewLeaderBtn btn btn-info btn-sm" data-bs-toggle="tooltip" title="View Leader">View</button>
+                            <button class="btn btn-info btn-sm view-member-btn" data-bs-toggle="tooltip" title="View Member">View</button>
                           </div>
                         `;
                     }
@@ -142,63 +142,107 @@
             ]
         });
 
-        // Delegated event handling for dynamically loaded buttons
-        $('#myTable tbody').on('click', '.viewLeaderBtn', function() {
-            var leaderId = $(this).val(); // Get leader_id from button value
-            viewLeaderDetails(leaderId); // Call view function with leader_id
-        });
+ $('#myTable tbody').on('click', '.view-member-btn', function () {
+    // Extract UIDM from the first cell in the same row as the clicked button
+    var memberUIDM = $(this).closest('tr').find('td:first').text().trim();
 
-        $('[data-bs-toggle="tooltip"]').tooltip();
-    });
+    console.log("Button clicked, UIDM value:", memberUIDM);
 
-    // Function to handle viewing leader details
-    function viewLeaderDetails(leaderId) {
-        $.ajax({
-            type: "GET",
-            url: "db/personProcess.php?leader_id=" + leaderId,
-            success: function(response) {
-                var res = typeof response === "object" ? response : jQuery.parseJSON(response);
-                if (res.status == 404) {
-                    alert(res.message);
-                } else if (res.status == 200) {
-                    $("#view_leader_photo").attr("src", "/info.sys/infosys/db/uploads/leaders/" + res.data.leader.leaders_photo);
-                    $("#view_barangay").text(res.data.leader.barangay);
-                    $("#view_full_name").text(res.data.leader.full_name);
-                    $("#view_precint_no").text(res.data.leader.precint_no);
-                    $("#view_contact_number").text(res.data.leader.contact_number);
-                    $("#view_address").text(res.data.leader.address);
-                    $("#view_birthdate").text(res.data.leader.birthdate);
-                    $("#view_age").text(res.data.leader.age);
-                    $("#view_civil_status").text(res.data.leader.civil_status);
-                    $("#view_sex").text(res.data.leader.sex);
-                    $("#view_uid").text(res.data.leader.UID);
-
-                    // Populate members table if needed
-                    var membersTableBody = $("#membersTableBody");
-                    membersTableBody.empty();
-
-                    res.data.members.forEach(function(member) {
-                        var row = `
-                            <tr>
-                                <td><img src="/info.sys/infosys/db/uploads/members/${member.member_photo}" alt="" class="img-fluid rounded" style="max-width: 50px;"></td>
-                                <td>${member.UIDM}</td>
-                                <td>${member.member_name}</td>
-                                <td>${member.member_birthdate}</td>
-                                <td>${member.member_contact}</td>
-                                <td>${member.member_precinct}</td>
-                            </tr>`;
-                        membersTableBody.append(row);
-                    });
-
-                    // Show the modal
-                    $("#leaderViewModal").modal("show");
-                }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.error("Error fetching leader details:", textStatus, errorThrown);
-            }
-        });
+    // Check if UIDM is valid
+    if (!memberUIDM) {
+        console.error("UIDM is missing or undefined. Ensure the table cell contains the UIDM.");
+        return; // Stop further execution if UIDM is missing
     }
+
+    // Call the function to fetch and display member details
+    viewMemberDetails(memberUIDM);
+});
+
+// Initialize Bootstrap tooltips
+$('[data-bs-toggle="tooltip"]').tooltip();
+
+// Function to fetch and display member details in the modal
+function viewMemberDetails(memberUIDM) {
+    $.ajax({
+        type: "GET",
+        url: "db/personProcess.php?UIDM=" + memberUIDM, // Fetch member details
+        success: function (response) {
+            console.log("Response:", response);
+            var res = typeof response === "object" ? response : jQuery.parseJSON(response);
+
+            if (res.status === 404) {
+                alert(res.message);
+            } else if (res.status === 200) {
+                console.log("Populating modal fields...");
+
+                // Populate modal fields
+                $("#members_view_uid").text(res.data.member.UIDM || "N/A");
+                $("#members_view_full_name").text(res.data.member.full_name || "N/A");
+                $("#members_view_contact_number").text(res.data.member.contact || "N/A");
+                $("#members_view_birthdate").text(res.data.member.birthdate || "N/A");
+                $("#members_view_precint_no").text(res.data.member.precinct || "N/A");
+
+                // Populate Reports for Assistance table
+                var reportsTableBody = $("#members_reportsTableBody");
+                reportsTableBody.empty(); // Clear existing rows
+                if (res.data.reports_help.length === 0) {
+                    reportsTableBody.append(`
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">No Reports Available</td>
+                        </tr>
+                    `);
+                } else {
+                    res.data.reports_help.forEach(function (report) {
+                        reportsTableBody.append(`
+                            <tr>
+                                <td>${report.date}</td>
+                                <td>${report.time}</td>
+                                <td>${report.assistance}</td>
+                                <td>${report.comments}</td>
+                                <td>
+                                    <button type="button" class="btn btn-danger btn-sm delete-report-btn" data-report-id="${report.id}">Delete</button>
+                                </td>
+                            </tr>
+                        `);
+                    });
+                }
+
+                // Populate Reports for Vote table
+                var votesTableBody = $("#members_votesTableBody");
+                votesTableBody.empty(); // Clear existing rows
+                if (res.data.votes.length === 0) {
+                    votesTableBody.append(`
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">No Reports Available</td>
+                        </tr>
+                    `);
+                } else {
+                    res.data.votes.forEach(function (vote) {
+                        votesTableBody.append(`
+                            <tr>
+                                <td>${vote.date}</td>
+                                <td>${vote.time_in}</td>
+                                <td>${vote.time_out}</td>
+                                <td>${vote.barangay}</td>
+                                <td>
+                                    <button type="button" class="btn btn-primary btn-sm" data-report-id="${vote.id}">View</button>
+                                </td>
+                            </tr>
+                        `);
+                    });
+                }
+
+                // Display the modal
+                $("#memberViewModal").modal("show");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("XHR Error:", xhr);
+            alert("Failed to fetch member details. Please try again.");
+        },
+    });
+}
+    });
 </script>
 
 
