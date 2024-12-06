@@ -74,6 +74,9 @@
                 <nav class="sb-sidenav-menu-nested nav">
                   <a class="nav-link" href="list_leaders.php">List of Leaders</a>
                   <a class="nav-link" href="list_members.php">List of Members</a>
+                  <a class="nav-link" href="list_reports_asst.php">Assistance Reports</a>
+                  <a class="nav-link" href="list_reports_vote.php">Voter Reports</a>
+                  <a class="nav-link" href="list_unlisted.php">Reports for unlisted people</a>
                 </nav>
             </div> 
               <a
