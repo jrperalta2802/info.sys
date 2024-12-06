@@ -54,6 +54,7 @@ $(document).on("submit", "#saveLeader", function (e) {
     },
   });
 });
+
 $(document).on("click", ".editLeaderBtn", function () {
   var leader_id = $(this).val();
   $.ajax({
@@ -138,26 +139,25 @@ $(document).on("submit", "#updateLeader", function (e) {
     dataType: "json",
     success: function (response) {
       console.log(response);
-
+  
       if (response.status === 422) {
-        $("#errorMessageUpdate").removeClass("d-none").text(response.message);
+          $("#errorMessageUpdate").removeClass("d-none").text(response.message);
       } else if (response.status === 200) {
-        $("#errorMessageUpdate").addClass("d-none");
-        alertify.set("notifier", "position", "top-right");
-        alertify.success(response.message);
-        $("#leaderEditModal").modal("hide");
-        $("#updateLeader")[0].reset();
-        $("#myTable").load(location.href + " #myTable");
+          $("#errorMessageUpdate").addClass("d-none");
+          alertify.set("notifier", "position", "top-right");
+          alertify.success(response.message);
+  
+          // Close modal and reset form
+          $("#leaderEditModal").modal("hide");
+          $("#updateLeader")[0].reset();
+  
+          // Redraw the DataTable
+          $('#myTable').DataTable().ajax.reload(null, false); // Reload table without resetting pagination
       } else if (response.status === 500) {
-        $("#errorMessageUpdate").removeClass("d-none").text(response.message);
+          $("#errorMessageUpdate").removeClass("d-none").text(response.message);
       }
-    },
-    error: function (xhr, status, error) {
-      console.error("AJAX Error:", xhr.responseText);
-      $("#errorMessageUpdate")
-        .removeClass("d-none")
-        .text("Error processing request. Please try again.");
-    },
+  },
+  
   });
 });
 

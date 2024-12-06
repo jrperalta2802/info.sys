@@ -135,14 +135,14 @@
 <?php include 'db/memberPrint_modal.php'; ?>
 <script src="db/js/dataManagement.js"></script>
 <script>
-  $(document).ready(function() {
+ $(document).ready(function () {
     // Initialize DataTable with server-side processing
     var table = $('#myTable').DataTable({
-      "serverSide": true,
-      "processing": true,
-      "ajax": {
-        "url": "db/server_processing.php", // Server-side script to handle data fetching
-        "type": "POST"
+        "serverSide": true,
+        "processing": true,
+        "ajax": {
+            "url": "db/server_processing.php",
+            "type": "POST"
       },
       "columns": [
         { "data": null, "defaultContent": "<button class='btn btn-sm btn-primary expandBtn'>+</button>" },
@@ -163,6 +163,18 @@
           }
         }
       ]
+    });
+
+     // Reinitialize tooltips after DataTable draw
+     $('#myTable').on('draw.dt', function () {
+        $('[data-bs-toggle="tooltip"]').tooltip(); // Reinitialize tooltips
+    });
+
+    // Reset modal state on close
+    $("#leaderEditModal").on("hidden.bs.modal", function () {
+        $(this).find("form")[0].reset();
+        $("#edit-members-container").empty(); // Clear dynamically added member fields
+        $("#errorMessageUpdate").addClass("d-none").text(""); // Hide any error messages
     });
 
     // Expand button click event to show members for a leader
