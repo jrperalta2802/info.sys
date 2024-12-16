@@ -1,9 +1,9 @@
 <!-- Edit Modal -->
-<div class="modal fade" id="leaderEditModal" tabindex="-1"  aria-hidden="true">
+<div class="modal fade" id="leaderEditModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" >Edit Leader</h5>
+                <h5 class="modal-title">Edit Leader</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="updateLeader" enctype="multipart/form-data">
@@ -11,6 +11,7 @@
                     <div class="container-fluid">
                         <div id="errorMessage" class="alert alert-warning d-none"></div>
                         <input type="hidden" id="leader_id" name="leader_id">
+                        <input type="hidden" id="deleted_members" name="deleted_members" value=""> <!-- Hidden input for deleted members -->
                         <div class="row">
                             <div class="col-md-4">
                                 <label for="edit_barangay">Barangay</label>
@@ -82,13 +83,21 @@
         </div>
     </div>
 </div>
-
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+   document.addEventListener('DOMContentLoaded', function () {
     var addMemberBtn = document.getElementById('edit-add-member');
+    var editModal = document.getElementById('leaderEditModal');
+
+    // Reset deleted_members when modal opens
+    editModal.addEventListener('show.bs.modal', function () {
+        document.getElementById('deleted_members').value = '';
+    });
+
     if (addMemberBtn) {
         addMemberBtn.addEventListener('click', function () {
-            var memberForms = document.getElementsByClassName('member-form');
+            // Count the visible member forms directly in the DOM
+            var memberForms = document.querySelectorAll('#edit-members-container .member-form');
+
             if (memberForms.length < 10) {
                 var newMemberForm = `
                     <div class="form-row row member-form">
@@ -132,8 +141,22 @@
 
     document.addEventListener('click', function (event) {
         if (event.target.classList.contains('remove-member')) {
-            event.target.closest('.member-form').remove();
+            var memberRow = event.target.closest('.member-form');
+            var memberId = memberRow.querySelector('[name="member_id[]"]')?.value;
+
+            if (memberId) {
+                // Add to deleted_members if it has an ID
+                var deletedMembers = document.getElementById('deleted_members').value;
+                document.getElementById('deleted_members').value = deletedMembers
+                    ? deletedMembers + ',' + memberId
+                    : memberId;
+            }
+
+            // Remove the member row from the DOM
+            memberRow.remove();
         }
     });
 });
+
+
 </script>

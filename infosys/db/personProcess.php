@@ -222,75 +222,88 @@ if (isset($_POST['update_leader'])) {
     $update_leader_stmt->bind_param("sssssssssi", $barangay, $contact_number, $precint_no, $full_name, $birthdate, $age, $address, $civil_status, $sex, $leader_id);
 
     if ($update_leader_stmt->execute()) {
-        $delete_members_query = "DELETE FROM members WHERE leader_id='$leader_id'";
-        if (!mysqli_query($con, $delete_members_query)) {
-            error_log("Error deleting members: " . mysqli_error($con));
-            echo json_encode(['status' => 500, 'message' => 'Error deleting members.']);
-            exit;
+        // Add deleted members handling
+        if (isset($_POST['deleted_members']) && !empty($_POST['deleted_members'])) {
+            $deleted_members = explode(',', $_POST['deleted_members']);
+            $placeholders = implode(',', array_fill(0, count($deleted_members), '?'));
+            $stmt = $con->prepare("DELETE FROM members WHERE id IN ($placeholders)");
+            $stmt->bind_param(str_repeat('i', count($deleted_members)), ...$deleted_members);
+            $stmt->execute();
         }
 
         if (!empty($_POST['member_name'])) {
-    foreach ($_POST['member_name'] as $index => $member_name) {
-        $member_birthdate = mysqli_real_escape_string($con, $_POST['member_birthdate'][$index]);
-        $member_contact = mysqli_real_escape_string($con, $_POST['member_contact'][$index]);
-        $member_precinct = mysqli_real_escape_string($con, $_POST['member_precinct'][$index]);
+            foreach ($_POST['member_name'] as $index => $member_name) {
+                $member_id = isset($_POST['member_id'][$index]) ? intval($_POST['member_id'][$index]) : null;
+                $member_birthdate = mysqli_real_escape_string($con, $_POST['member_birthdate'][$index]);
+                $member_contact = mysqli_real_escape_string($con, $_POST['member_contact'][$index]);
+                $member_precinct = mysqli_real_escape_string($con, $_POST['member_precinct'][$index]);
 
-        // Check if the member already exists under a different leader
-        $check_member_query = $con->prepare(
-            "SELECT id FROM members WHERE member_name=? AND member_birthdate=? AND leader_id!=?"
-        );
-        $check_member_query->bind_param("ssi", $member_name, $member_birthdate, $leader_id);
-        $check_member_query->execute();
-        $check_member_query->store_result();
+                $member_photo = isset($_FILES['member_photo']['name'][$index]) ? $_FILES['member_photo']['name'][$index] : '';
+                $member_photo_tmp = isset($_FILES['member_photo']['tmp_name'][$index]) ? $_FILES['member_photo']['tmp_name'][$index] : '';
 
-        if ($check_member_query->num_rows > 0) {
-            // Member exists under a different leader, return an error
-            echo json_encode([
-                'status' => 422,
-                'message' => "Member '{$member_name}' with birthdate '{$member_birthdate}' is already assigned to another leader."
-            ]);
-            exit;
-        }
+                $upload_dir = 'uploads/members/';
+                $member_photo_name = basename($member_photo);
+                $member_photo_folder = $upload_dir . $member_photo_name;
 
-        // Proceed with inserting the member if validation passes
-        $member_photo = isset($_FILES['member_photo']['name'][$index]) ? $_FILES['member_photo']['name'][$index] : '';
-        $member_photo_tmp = isset($_FILES['member_photo']['tmp_name'][$index]) ? $_FILES['member_photo']['tmp_name'][$index] : '';
-
-        $upload_dir = 'uploads/members/';
-        $member_photo_name = basename($member_photo);
-        $member_photo_folder = $upload_dir . $member_photo_name;
-
-        if ($member_photo) {
-            if (move_uploaded_file($member_photo_tmp, $member_photo_folder)) {
-                $old_member_photo = isset($_POST['existing_member_photo'][$index]) ? $_POST['existing_member_photo'][$index] : '';
-                if ($old_member_photo && file_exists($upload_dir . $old_member_photo) && $old_member_photo !== $member_photo_name) {
-                    unlink($upload_dir . $old_member_photo);
+                if ($member_photo) {
+                    if (move_uploaded_file($member_photo_tmp, $member_photo_folder)) {
+                        $old_member_photo = isset($_POST['existing_member_photo'][$index]) ? $_POST['existing_member_photo'][$index] : '';
+                        if ($old_member_photo && file_exists($upload_dir . $old_member_photo) && $old_member_photo !== $member_photo_name) {
+                            unlink($upload_dir . $old_member_photo);
+                        }
+                    } else {
+                        error_log("Failed to move uploaded file for member photo at index $index.");
+                        $member_photo_name = '';
+                    }
+                } else {
+                    $member_photo_name = isset($_POST['existing_member_photo'][$index]) ? $_POST['existing_member_photo'][$index] : '';
                 }
-            } else {
-                error_log("Failed to move uploaded file for member photo at index $index.");
-                $member_photo_name = '';
+
+                // Check if the member already exists under a different leader
+                $check_member_query = $con->prepare(
+                    "SELECT id FROM members WHERE member_name=? AND member_birthdate=? AND leader_id!=?"
+                );
+                $check_member_query->bind_param("ssi", $member_name, $member_birthdate, $leader_id);
+                $check_member_query->execute();
+                $check_member_query->store_result();
+
+                if ($check_member_query->num_rows > 0) {
+                    echo json_encode([
+                        'status' => 422,
+                        'message' => "Member '{$member_name}' with birthdate '{$member_birthdate}' is already assigned to another leader."
+                    ]);
+                    exit;
+                }
+
+                if ($member_id) {
+                    // Update existing member
+                    $member_stmt = $con->prepare(
+                        "UPDATE members 
+                        SET member_name = ?, member_birthdate = ?, member_contact = ?, member_precinct = ?, member_photo = ?
+                        WHERE id = ?"
+                    );
+                    $member_stmt->bind_param("sssssi", $member_name, $member_birthdate, $member_contact, $member_precinct, $member_photo_name, $member_id);
+                } else {
+                    // Insert new member
+                    $member_stmt = $con->prepare(
+                        "INSERT INTO members (leader_id, member_name, member_birthdate, member_contact, member_precinct, member_photo) 
+                        VALUES (?, ?, ?, ?, ?, ?)"
+                    );
+                    $member_stmt->bind_param("isssss", $leader_id, $member_name, $member_birthdate, $member_contact, $member_precinct, $member_photo_name);
+                }
+
+                if (!$member_stmt->execute()) {
+                    error_log("Error inserting/updating member: " . $member_stmt->error);
+                }
             }
-        } else {
-            $member_photo_name = isset($_POST['existing_member_photo'][$index]) ? $_POST['existing_member_photo'][$index] : '';
         }
-
-        $member_stmt = $con->prepare(
-            "INSERT INTO members (leader_id, member_name, member_birthdate, member_contact, member_precinct, member_photo) 
-            VALUES (?, ?, ?, ?, ?, ?)"
-        );
-        $member_stmt->bind_param("isssss", $leader_id, $member_name, $member_birthdate, $member_contact, $member_precinct, $member_photo_name);
-
-        if (!$member_stmt->execute()) {
-            error_log("Error inserting member: " . $member_stmt->error);
-        }
-    }
-}
 
         echo json_encode(['status' => 200, 'message' => 'Leader updated successfully!']);
     } else {
         echo json_encode(['status' => 500, 'message' => 'Error updating leader: ' . $update_leader_stmt->error]);
     }
 }
+
 
 if (isset($_GET['leader_id'])) {
     $leader_id = $_GET['leader_id'];

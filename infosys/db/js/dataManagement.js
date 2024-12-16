@@ -82,10 +82,14 @@ $(document).on("click", ".editLeaderBtn", function () {
             res.data.leader.leaders_photo
         );
 
+        // Clear and reset members container and deleted members tracker
         $("#edit-members-container").empty();
+        $("#deleted_members").val("");
+
         res.data.members.forEach(function (member) {
           var memberForm = `
-            <div class="form-row row member-form">
+            <div class="form-row row member-form" data-member-id="${member.id}">
+              <input type="hidden" name="member_id[]" value="${member.id}">
               <div class="col-md-4 mb-3">
                 <label for="member_name">Full Name</label>
                 <input type="text" class="form-control" name="member_name[]" value="${member.member_name}">
@@ -106,7 +110,7 @@ $(document).on("click", ".editLeaderBtn", function () {
                   </div>
                   <input type="text" class="form-control" name="member_precinct[]" value="${member.member_precinct}">
                   <div class="input-group-append">
-                    <button type="button" class="btn btn-danger remove-member">Remove</button>
+                    <button type="button" class="btn btn-danger remove-member" data-member-id="${member.id}">Remove</button>
                   </div>
                 </div>
               </div>
@@ -125,6 +129,20 @@ $(document).on("click", ".editLeaderBtn", function () {
     },
   });
 });
+
+$(document).on("click", ".remove-member", function () {
+  var memberId = $(this).data("member-id");
+  if (memberId) {
+    // Add the member ID to the deleted members hidden input
+    var deletedMembers = $("#deleted_members").val();
+    deletedMembers += (deletedMembers ? "," : "") + memberId;
+    $("#deleted_members").val(deletedMembers);
+  }
+
+  // Remove the member form row from the DOM
+  $(this).closest(".member-form").remove();
+});
+
 $(document).on("submit", "#updateLeader", function (e) {
   e.preventDefault();
   var formData = new FormData(this);
@@ -139,25 +157,24 @@ $(document).on("submit", "#updateLeader", function (e) {
     dataType: "json",
     success: function (response) {
       console.log(response);
-  
+
       if (response.status === 422) {
-          $("#errorMessageUpdate").removeClass("d-none").text(response.message);
+        $("#errorMessageUpdate").removeClass("d-none").text(response.message);
       } else if (response.status === 200) {
-          $("#errorMessageUpdate").addClass("d-none");
-          alertify.set("notifier", "position", "top-right");
-          alertify.success(response.message);
-  
-          // Close modal and reset form
-          $("#leaderEditModal").modal("hide");
-          $("#updateLeader")[0].reset();
-  
-          // Redraw the DataTable
-          $('#myTable').DataTable().ajax.reload(null, false); // Reload table without resetting pagination
+        $("#errorMessageUpdate").addClass("d-none");
+        alertify.set("notifier", "position", "top-right");
+        alertify.success(response.message);
+
+        // Close modal and reset form
+        $("#leaderEditModal").modal("hide");
+        $("#updateLeader")[0].reset();
+
+        // Redraw the DataTable
+        $("#myTable").DataTable().ajax.reload(null, false); // Reload table without resetting pagination
       } else if (response.status === 500) {
-          $("#errorMessageUpdate").removeClass("d-none").text(response.message);
+        $("#errorMessageUpdate").removeClass("d-none").text(response.message);
       }
-  },
-  
+    },
   });
 });
 
